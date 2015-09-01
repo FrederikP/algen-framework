@@ -337,10 +337,10 @@ public:
     }
 
     virtual memory_result* new_result(bool set_to_max = false) const {
-        #if defined(ENV64BIT)
+        #if defined(ENVIRONMENT64)
             // 64-bit code here.
             size_t value = set_to_max ? ((size_t)1) << 62 : 0;
-        #elif defined (ENV32BIT)
+        #elif defined (ENVIRONMENT32)
             // 32-bit code here.
             size_t value = set_to_max ? ((size_t)1) << 30 : 0;
         #else
@@ -354,7 +354,7 @@ public:
             // - What if the code has just been ported to a different OS?
             // - What if there is an unknown unknown, not mentioned in this list so far?
             // I'm only human, and the mistakes above would break the *entire* codebase.
-            #error "Must define either ENV32BIT or ENV64BIT"
+            #error "Must define either ENVIRONMENT64 or ENVIRONMENT32"
         #endif
         return new memory_result(value, value, value);
     }
