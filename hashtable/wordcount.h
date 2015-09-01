@@ -5,6 +5,8 @@
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
+#include <string>
+#include <map>
 
 #include "../common/benchmark.h"
 #include "../common/contenders.h"
@@ -17,6 +19,10 @@ public:
     using Configuration = std::pair<size_t, size_t>;
     using Benchmark = common::benchmark<HashTable, Configuration>;
     using BenchmarkFactory = common::contender_factory<Benchmark>;
+    
+    std::map < size_t, std::pair< std::string, std::string > >  fileNameMap;
+    fileNameMap[0] = std::make_pair("Kafka", "Verwandl");
+    fileNameMap[1] = std::make_pair("Shakesp", "complete");
 
     // fake word count, doesn't actually determine the most frequent
     // words because our hashtables don't have an iterator interface
@@ -31,20 +37,26 @@ public:
     static void register_benchmarks(common::contender_list<Benchmark> &benchmarks) {
         // HACKHACKHACK
         const std::vector<Configuration> configs{
-            std::make_pair(0x4b61666b61, 0x56657277616e646c), // "Kafka", "Verwandl"
-            std::make_pair(0x5368616b657370, 0x636f6d706c657465) // "Shakesp", "complete"
+            std::make_pair(0, 0), // "Kafka", "Verwandl"
+            std::make_pair(1, 0) // "Shakesp", "complete"
         };
+        
+        std::map < size_t, std::pair< std::string, std::string > >  fileNameMap;
+        fileNameMap[0] = std::make_pair("Kafka", "Verwandl");
+        fileNameMap[1] = std::make_pair("Shakesp", "complete");
 
         using Key = typename HashTable::key_type;
 
         common::register_benchmark("wordcount", "wordcount",
             [](HashTable&, Configuration config, void*) -> void* {
+                size_t nameIndex = config.first;
+                std::pair< std::string, std::string > namePair = fileNameMap[nameIndex];
                 // awful hack approaching
                 std::stringstream fn;
                 // convert encoded filename back to ascii
-                fn << "data/wordcount_" << common::util::hex_to_ascii(config.first);
-                if (config.second > 0)
-                    fn << "_" << common::util::hex_to_ascii(config.second);
+                fn << "data/wordcount_" << namePair.first;
+                if (!namePair.second.empty())
+                    fn << "_" << namepair.second;
                 fn << ".txt";
 
                 std::ifstream in(fn.str());
