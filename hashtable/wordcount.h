@@ -19,10 +19,6 @@ public:
     using Configuration = std::pair<size_t, size_t>;
     using Benchmark = common::benchmark<HashTable, Configuration>;
     using BenchmarkFactory = common::contender_factory<Benchmark>;
-    
-    std::map < size_t, std::pair< std::string, std::string > >  fileNameMap;
-    fileNameMap[0] = std::make_pair("Kafka", "Verwandl");
-    fileNameMap[1] = std::make_pair("Shakesp", "complete");
 
     // fake word count, doesn't actually determine the most frequent
     // words because our hashtables don't have an iterator interface
@@ -56,7 +52,7 @@ public:
                 // convert encoded filename back to ascii
                 fn << "data/wordcount_" << namePair.first;
                 if (!namePair.second.empty())
-                    fn << "_" << namepair.second;
+                    fn << "_" << namePair.second;
                 fn << ".txt";
 
                 std::ifstream in(fn.str());
