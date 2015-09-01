@@ -44,7 +44,7 @@ public:
         using Key = typename HashTable::key_type;
 
         common::register_benchmark("wordcount", "wordcount",
-            [](HashTable&, Configuration config, void*) -> void* {
+            [&fileNameMap](HashTable&, Configuration config, void*) -> void* {
                 size_t nameIndex = config.first;
                 std::pair< std::string, std::string > namePair = fileNameMap[nameIndex];
                 // awful hack approaching
