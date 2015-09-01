@@ -1,5 +1,25 @@
 #pragma once
 
+// Check windows
+#if _WIN32 || _WIN64
+#if _WIN64
+#define ENVIRONMENT64
+#else
+#define ENVIRONMENT32
+#endif
+#endif
+
+// Check GCC
+#if __GNUC__
+#if __x86_64__ || __ppc64__
+#define ENVIRONMENT64
+#else
+#define ENVIRONMENT32
+#endif
+#endif
+
+//TODO check for more compilers and architectures for 32 and 64 bit detection
+
 #include <algorithm>
 #include <ostream>
 #include <papi.h>
@@ -317,7 +337,25 @@ public:
     }
 
     virtual memory_result* new_result(bool set_to_max = false) const {
-        size_t value = set_to_max ? ((size_t)1) << 62 : 0;
+        #if defined(ENV64BIT)
+            // 64-bit code here.
+            size_t value = set_to_max ? ((size_t)1) << 62 : 0;
+        #elif defined (ENV32BIT)
+            // 32-bit code here.
+            size_t value = set_to_max ? ((size_t)1) << 30 : 0;
+        #else
+            // INCREASE ROBUSTNESS. ALWAYS THROW AN ERROR ON THE ELSE.
+            // - What if I made a typo and checked for ENV6BIT instead of ENV64BIT?
+            // - What if both ENV64BIT and ENV32BIT are not defined?
+            // - What if project is corrupted, and _WIN64 and _WIN32 are not defined?
+            // - What if I didn't include the required header file?
+            // - What if I checked for _WIN32 first instead of second?
+            //   (in Windows, both are defined in 64-bit, so this will break codebase)
+            // - What if the code has just been ported to a different OS?
+            // - What if there is an unknown unknown, not mentioned in this list so far?
+            // I'm only human, and the mistakes above would break the *entire* codebase.
+            #error "Must define either ENV32BIT or ENV64BIT"
+        #endif
         return new memory_result(value, value, value);
     }
 
