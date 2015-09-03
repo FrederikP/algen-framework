@@ -1,7 +1,7 @@
 # g++ >= 4.9 or clang++ >= 3.4 is required to build this.
 # clang++ 3.4 and 3.5 cannot build the compare target with debug information.
 # Either remove "-g" from the flags or use clang++ >= 3.6 (or g++).
-CC ?= gcc
+CC = gcc
 
 SANITIZER ?= address
 
