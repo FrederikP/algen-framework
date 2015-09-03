@@ -12,6 +12,11 @@
 #include "../common/contenders.h"
 
 namespace hashtable {
+    
+static const std::map < size_t, std::pair< std::string, std::string > >  fileNameMap = {
+    {0, std::make_pair("Kafka", "Verwandl")},
+    {1, std::make_pair("Shakesp", "complete")}
+};
 
 template <typename HashTable>
 class wordcount {
@@ -20,11 +25,6 @@ public:
     using Benchmark = common::benchmark<HashTable, Configuration>;
     using BenchmarkFactory = common::contender_factory<Benchmark>;
     
-    static std::map < size_t, std::pair< std::string, std::string > >  fileNameMap = {
-        {0, std::make_pair("Kafka", "Verwandl")},
-        {1, std::make_pair("Shakesp", "complete")}
-    };
-
     // fake word count, doesn't actually determine the most frequent
     // words because our hashtables don't have an iterator interface
     template <typename It>
