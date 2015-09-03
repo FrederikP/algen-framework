@@ -12,11 +12,6 @@
 #include "../common/contenders.h"
 
 namespace hashtable {
-    
-static const std::map < size_t, std::pair< std::string, std::string > >  fileNameMap = {
-    {0, std::make_pair("Kafka", "Verwandl")},
-    {1, std::make_pair("Shakesp", "complete")}
-};
 
 template <typename HashTable>
 class wordcount {
@@ -24,6 +19,14 @@ public:
     using Configuration = std::pair<size_t, size_t>;
     using Benchmark = common::benchmark<HashTable, Configuration>;
     using BenchmarkFactory = common::contender_factory<Benchmark>;
+    
+    static std::map < size_t, std::pair< std::string, std::string > > getFileNameMap() {
+        std::map < size_t, std::pair< std::string, std::string > >  fileNameMap = {
+            {0, std::make_pair("Kafka", "Verwandl")},
+            {1, std::make_pair("Shakesp", "complete")}
+        };
+        return fileNameMap;
+    }
     
     // fake word count, doesn't actually determine the most frequent
     // words because our hashtables don't have an iterator interface
@@ -47,6 +50,7 @@ public:
         common::register_benchmark("wordcount", "wordcount",
             [](HashTable&, Configuration config, void*) -> void* {
                 size_t nameIndex = config.first;
+                std::map < size_t, std::pair< std::string, std::string > >  fileNameMap = getFileNameMap();
                 std::pair< std::string, std::string > namePair = fileNameMap[nameIndex];
                 // awful hack approaching
                 std::stringstream fn;
