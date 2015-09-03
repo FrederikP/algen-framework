@@ -197,13 +197,13 @@ public:
     }
 };
 
-template<int event1 = PAPI_L1_DCM, int event2 = PAPI_L2_DCM, int event3 = PAPI_TOT_CYC>
+template<int event1 = PAPI_L1_DCM, int event2 = PAPI_L2_DCM, int event3 = PAPI_L3_TCM>
 class papi_instrumentation : public instrumentation {
     long long counters[3];
-    int events[3];
+    int events[2];
     papi_instrumentation(const papi_instrumentation &) = delete;
 public:
-    papi_instrumentation() : counters{0,0,0}, events{event1, event2, event3} {
+    papi_instrumentation() : counters{0,0,0}, events{event1, event2/*, event3*/} {
         if (PAPI_is_initialized() == PAPI_NOT_INITED &&
             PAPI_library_init(PAPI_VER_CURRENT) != PAPI_VER_CURRENT) {
             std::cerr << "PAPI_library_init failed" << std::endl;
@@ -212,7 +212,7 @@ public:
     virtual ~papi_instrumentation() = default;
 
     void setup() {
-        int ret = PAPI_start_counters(events, 3);
+        int ret = PAPI_start_counters(events, 2);
         if (ret != PAPI_OK) {
             std::cerr << "Failed to start PAPI counters. Error " << PAPI_strerror(ret) << std::endl;
         }
