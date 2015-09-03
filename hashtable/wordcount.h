@@ -19,6 +19,11 @@ public:
     using Configuration = std::pair<size_t, size_t>;
     using Benchmark = common::benchmark<HashTable, Configuration>;
     using BenchmarkFactory = common::contender_factory<Benchmark>;
+    
+    static std::map < size_t, std::pair< std::string, std::string > >  fileNameMap = {
+        {0, std::make_pair("Kafka", "Verwandl")},
+        {1, std::make_pair("Shakesp", "complete")}
+    }
 
     // fake word count, doesn't actually determine the most frequent
     // words because our hashtables don't have an iterator interface
@@ -36,15 +41,11 @@ public:
             std::make_pair(0, 0), // "Kafka", "Verwandl"
             std::make_pair(1, 0) // "Shakesp", "complete"
         };
-        
-        std::map < size_t, std::pair< std::string, std::string > >  fileNameMap;
-        fileNameMap[0] = std::make_pair("Kafka", "Verwandl");
-        fileNameMap[1] = std::make_pair("Shakesp", "complete");
 
         using Key = typename HashTable::key_type;
 
         common::register_benchmark("wordcount", "wordcount",
-            [&fileNameMap](HashTable&, Configuration config, void*) -> void* {
+            [](HashTable&, Configuration config, void*) -> void* {
                 size_t nameIndex = config.first;
                 std::pair< std::string, std::string > namePair = fileNameMap[nameIndex];
                 // awful hack approaching
