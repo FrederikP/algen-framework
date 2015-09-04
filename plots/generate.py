@@ -29,8 +29,7 @@ set ylabel '{plot_desc} per element (n){add}'
 plot_types = [
     ("timer", [("running time", "time", "time", {"factor": 1e6, "add": "in nanoseconds"})]),
     ("PAPI_cache", [("L1 data cache misses", "L1miss", "L1D_cache_misses", {"keypos": "top left"}),
-                    ("L2 data cache misses", "L2miss", "L2D_cache_misses", {}),
-                    ("L3 cache misses",      "L3miss", "L3_cache_misses", {})]),
+                    ("L2 data cache misses", "L2miss", "L2D_cache_misses", {})]),
     ("PAPI_instr", [("total cycles", "cycles", "Total_cycles", {}),
                     ("instructions completed", "instructions", "Instr_completed", {}),
                     ("branch mispredictions", "branchmiss", "Cond_br_mspredictd", {})]),
