@@ -58,18 +58,29 @@ private:
 
 template <typename Key,
           typename T>
-class outer_table_entry<Key, T> {
+class inner_table_entry{
+public:
+	inner_table_entry(Key& elementKey, T& elementValue) : key(elementKey), t(elementValue) {
+	}
+	Key& key;
+	T& t;
+};
+
+template <typename Key,
+          typename T>
+class outer_table_entry {
 public:
 	outer_table_entry() : innerHashFcn(computeSetAndReturnMl(0)), innerTable(ml) {
 		
 	}
 	size_t computeSetAndReturnMl(size_t initialElementCount) {
-		size_t max = std::max(initialElementCount, 10);
+		size_t minimumSize = 10;
+		size_t max = std::max(initialElementCount, minimumSize);
 		ml = max * (max - 1) + 1;
 		return ml;
 	}
 	T& getValue(size_t key) {
-		size_t innerIndex = innerHashFcn[];
+		size_t innerIndex = innerHashFcn(key);
 		inner_table_entry<Key, T> entry = innerTable[innerIndex];
 		return entry.t;
 	}
@@ -77,16 +88,6 @@ private:
 	size_t ml;
 	inner_universal_hash_fcn innerHashFcn;
 	std::vector< inner_table_entry<Key, T> > innerTable;
-};
-
-template <typename Key,
-          typename T>
-class inner_table_entry<Key, T> {
-public:
-	inner_table_entry(Key& elementKey, T& elementValue) : key(elementKey), t(elementValue) {
-	}
-	Key& key;
-	T& t;
 };
 
 template <typename Key,
@@ -100,7 +101,7 @@ public:
 		count = 0;
 		s = numberOfSubBlocks;
 		for (size_t i = 0; i < s; i++) {
-			outerTable[i] = outer_table_entry();
+			outerTable[i] = outer_table_entry<Key,T>();
 		}
     }
     virtual ~fred_hash_map() = default;
@@ -118,22 +119,22 @@ public:
     T& operator[](const Key &key) override {
         size_t preHash = preHashFcn(key);
 		size_t subTableIndex = outerHashFcn(preHash);
-		outer_table_entry outerEntry = outerTable[subTableIndex];
-		return outerEntry->getValue(preHash);
+		outer_table_entry< Key, T > outerEntry = outerTable[subTableIndex];
+		return outerEntry.getValue(preHash);
 	}
 
     T& operator[](Key&& key) override {
         size_t preHash = preHashFcn(std::move(key));
 		size_t subTableIndex = outerHashFcn(preHash);
-		outer_table_entry outerEntry = outerTable[subTableIndex];
-		return outerEntry->getValue(preHash);
+		outer_table_entry< Key, T > outerEntry = outerTable[subTableIndex];
+		return outerEntry.getValue(preHash);
     }
 
     maybe<T> find(const Key &key) const override {
         size_t preHash = preHashFcn(key);
 		size_t subTableIndex = outerHashFcn(preHash);
-		outer_table_entry outerEntry = outerTable[subTableIndex];
-		return just<T>(outerEntry->getValue(preHash));
+		outer_table_entry< Key, T > outerEntry = outerTable[subTableIndex];
+		return just<T>(outerEntry.getValue(preHash));
 		//return nothing<T>();
     }
 
@@ -153,7 +154,7 @@ public:
 private:
 	PreHashFcn preHashFcn;
 	OuterHashFcn outerHashFcn;
-	std::vector< OuterTableEntry<Key, T> > outerTable;
+	std::vector< outer_table_entry < Key, T > > outerTable;
 	size_t M;
 	size_t count;
 	size_t s;
