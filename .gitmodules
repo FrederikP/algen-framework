@@ -1,3 +1,6 @@
 [submodule "malloc_count"]
 	path = malloc_count
 	url = https://github.com/lorenzhs/malloc_count
+[submodule "hashtable/primesieve"]
+	path = hashtable/primesieve
+	url = https://github.com/kimwalisch/primesieve.git
