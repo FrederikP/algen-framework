@@ -4,7 +4,7 @@
 
 #include "../common/contenders.h"
 #include "hashtable.h"
-#include "primesieve/include/primesieve.hpp"
+#include <primesieve.hpp>
 
 namespace hashtable {
 
