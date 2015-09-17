@@ -108,6 +108,19 @@ public:
 		element<Key, T> element = elements[elementIndex];
 		return element.getValue();
 	}
+	
+	size_t erase(size_t key) {
+		/*size_t elementIndex =*/ elementHashFunction(key);
+
+		// How to check, if the element is null?
+
+		/*element<Key, T> element = elements[elementIndex];
+		if (element != nullptr and !element.isDeleted()) {
+			element.markDeleted();
+			return 1;
+		}*/
+		return 0;
+	}
 };
 
 template <typename Key, typename T, typename PreHashFcn = std::hash<Key>>
@@ -162,8 +175,10 @@ public:
     }
 
     size_t erase(const Key &key) override {
-		/*size_t preHash = */preHashFcn(key);
-		return 0;
+		size_t preHash = preHashFcn(key);
+		size_t bucketIndex = bucketHashFunction(preHash);
+		bucket<Key, T> bucket = buckets[bucketIndex];
+		return bucket.erase(preHash);
     }
 
     size_t size() const override { 
