@@ -24,7 +24,7 @@ public:
 		std::uniform_int_distribution<size_t> uniform_dist(1, p - 1);
 		k = uniform_dist(e1);
 	}
-	size_t operator()(size_t x) {
+	size_t operator()(size_t& x) const {
 		return (k * x % p) % s;
 	}
 private:
@@ -48,7 +48,7 @@ public:
 		std::uniform_int_distribution<size_t> uniform_dist(1, p - 1);
 		k = uniform_dist(e1);
 	}
-	size_t operator()(size_t x) {
+	size_t operator()(size_t& x) const {
 		return k * x % p;
 	}
 private:
@@ -62,8 +62,16 @@ class inner_table_entry{
 public:
 	inner_table_entry(Key& elementKey, T& elementValue) : key(elementKey), t(elementValue) {
 	}
-	Key& key;
-	T& t;
+	inner_table_entry() : key(0), t(0) {}
+	Key& getKey() {
+		return key;
+	}
+	T& getValue() {
+		return t;
+	}
+private:
+	Key key;
+	T t;
 };
 
 template <typename Key,
@@ -81,8 +89,8 @@ public:
 	}
 	T& getValue(size_t key) {
 		size_t innerIndex = innerHashFcn(key);
-		inner_table_entry<Key, T> entry = innerTable[innerIndex];
-		return entry.t;
+		inner_table_entry<Key, T>& entry = innerTable[innerIndex];
+		return entry.getValue();
 	}
 private:
 	size_t ml;
@@ -96,7 +104,7 @@ template <typename Key,
 		  typename OuterHashFcn = outer_universal_hash_fcn>
 class fred_hash_map : public hashtable<Key, T> {
 public:
-    fred_hash_map(size_t initialM, size_t numberOfSubBlocks) : hashtable<Key, T>(), outerHashFcn(M, s), outerTable(s) {
+    fred_hash_map(size_t initialM, size_t numberOfSubBlocks) : hashtable<Key, T>(), outerHashFcn(initialM, numberOfSubBlocks), outerTable(s) {
 		M = initialM;
 		count = 0;
 		s = numberOfSubBlocks;
@@ -115,7 +123,7 @@ public:
             [initialM, s](){ return new fred_hash_map<Key, T>(initialM, s); }
         ));
     }
-
+		
     T& operator[](const Key &key) override {
         size_t preHash = preHashFcn(key);
 		size_t subTableIndex = outerHashFcn(preHash);
@@ -139,7 +147,7 @@ public:
     }
 
     size_t erase(const Key &key) override {
-		size_t preHash = preHashFcn(key);
+		/*size_t preHash = */preHashFcn(key);
 		return 0;
     }
 
