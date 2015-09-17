@@ -15,6 +15,7 @@
 #include "hashtable/dense_hash_map.h"
 #include "hashtable/sparse_hash_map.h"
 #include "hashtable/fred_hash_map.h"
+#include "hashtable/lennart_hash_map.h"
 #include "hashtable/unordered_map.h"
 #include "hashtable/microbenchmark.h"
 #include "hashtable/wordcount.h"
@@ -70,6 +71,7 @@ int main(int argc, char** argv) {
     hashtable::sparse_hash_map<int, int>::register_contenders(contenders);
 
 	hashtable::fred_hash_map<int, int>::register_contenders(contenders);
+	hashtable::DPH_with_array_buckets<int, int>::register_contenders(contenders);
 
     // Register Benchmarks
     common::contender_list<Benchmark> benchmarks;

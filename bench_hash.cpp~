@@ -14,6 +14,8 @@
 
 #include "hashtable/dense_hash_map.h"
 #include "hashtable/sparse_hash_map.h"
+#include "hashtable/fred_hash_map.h"
+#include "hashtable/lennart_hash_map.h"
 #include "hashtable/unordered_map.h"
 #include "hashtable/microbenchmark.h"
 #include "hashtable/wordcount.h"
