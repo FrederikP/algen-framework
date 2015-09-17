@@ -14,32 +14,49 @@ class bucket_hash_function {
 private:
 	size_t random;
 	size_t prime;
-	size_t bucketAmount;
+	size_t size;
 	
 public:
-	bucket_hash_function(size_t M, size_t bucketAmount) {
+	void initialize(size_t M, size_t bucketAmount) {
 		std::vector<size_t> primes;
 		// Choose first prime >= M
 		primesieve::generate_n_primes<size_t>(1, M, &primes);
 		prime = primes[0];
-		bucketAmount = bucketAmount;
+		
+		size = bucketAmount;
+		
 		// Seed with a real random value, if available
 		std::random_device device;
- 
 		// Choose a random factor between 1 and prime - 1
 		std::default_random_engine engine(device());
 		std::uniform_int_distribution<size_t> uniform_dist(1, prime - 1);
 		random = uniform_dist(engine);
 	}
 	size_t operator()(size_t& x) const {
-		return (random * x % prime) % bucketAmount;
+		return (random * x % prime) % size;
 	}
 };
 
 class element_hash_function {
+private:
+	size_t random;
+	size_t prime;
 public:
+	void initialize(size_t size) {
+		std::vector<size_t> primes;
+		// Choose first prime >= M
+		primesieve::generate_n_primes<size_t>(1, size, &primes);
+		prime = primes[0];
+		
+		// Seed with a real random value, if available
+		std::random_device device;
+		// Choose a random factor between 1 and prime - 1
+		std::default_random_engine engine(device());
+		std::uniform_int_distribution<size_t> uniform_dist(1, prime - 1);
+		random = uniform_dist(engine);
+	}
 	size_t operator()(size_t& x) const {
-		return x * 0;
+		return random * x % prime;
 	}
 };
 
@@ -82,6 +99,7 @@ public:
 		size_t minimumSize = 10;
 		size_t max = std::max(minimumSize, intendedSize);
 		size = max * (max - 1) + 1;
+		elementHashFunction.initialize(size);
 		elements[size] = { };
 	}
 	
@@ -115,11 +133,12 @@ public:
         ));
     }
 	
-    DPH_with_array_buckets(size_t initialM, size_t initialBucketAmount)
-			: hashtable<Key, T>(), bucketHashFunction(initialM, initialBucketAmount) {
+    DPH_with_array_buckets(size_t initialM, size_t initialBucketAmount) : hashtable<Key, T>() {
 		M = initialM;
 		count = 0;
 		bucketAmount = initialBucketAmount;
+
+		bucketHashFunction.initialize(M, bucketAmount);
 		
 		buckets[bucketAmount] = { };
 		for (size_t i = 0; i < bucketAmount; i++) {
