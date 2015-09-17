@@ -138,7 +138,7 @@ public:
 		count = 0;
 		bucketAmount = initialBucketAmount;
 
-		bucketHashFunction.initialize(M, bucketAmount)
+		bucketHashFunction.initialize(M, bucketAmount);
 		
 		buckets[bucketAmount] = { };
 		for (size_t i = 0; i < bucketAmount; i++) {
@@ -155,9 +155,6 @@ public:
 
     T& operator[](Key&& key) override {
 		size_t preHash = preHashFcn(std::move(key));
-		size_t bucketIndex = bucketHashFunction(preHash);
-		bucket<Key, T> bucket = buckets[bucketIndex];
-		return bucket.getValue(preHash);
     }
 
     maybe<T> find(const Key &key) const override {
@@ -176,6 +173,13 @@ public:
 
     void clear() override { 
 
+	}
+
+private:
+	T& getValue(size_t preHash) {
+		size_t bucketIndex = bucketHashFunction(preHash);
+		bucket<Key, T> bucket = buckets[bucketIndex];
+		return bucket.getValue(preHash);
 	}
 };
 

@@ -148,16 +148,12 @@ public:
 		
     T& operator[](const Key &key) override {
 		size_t preHash = preHashFcn(key);
-		size_t bucketIndex = bucketHashFunction(preHash);
-		bucket<Key, T> bucket = buckets[bucketIndex];
-		return bucket.getValue(preHash);
+		return getValue(preHash);
 	}
 
     T& operator[](Key&& key) override {
 		size_t preHash = preHashFcn(std::move(key));
-		size_t bucketIndex = bucketHashFunction(preHash);
-		bucket<Key, T> bucket = buckets[bucketIndex];
-		return bucket.getValue(preHash);
+		return getValue(preHash);
     }
 
     maybe<T> find(const Key &key) const override {
@@ -176,6 +172,13 @@ public:
 
     void clear() override { 
 
+	}
+
+private:
+	T& getValue(size_t preHash) {
+		size_t bucketIndex = bucketHashFunction(preHash);
+		bucket<Key, T> bucket = buckets[bucketIndex];
+		return bucket.getValue(preHash);
 	}
 };
 
