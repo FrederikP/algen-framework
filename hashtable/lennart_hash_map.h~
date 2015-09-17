@@ -108,14 +108,27 @@ public:
 		element<Key, T> element = elements[elementIndex];
 		return element.getValue();
 	}
+
+	maybe<T> find(const Key &key) const {
+		/*size_t elementIndex =*/ elementHashFunction(key);
+		/*element<Key, T> element = elements[elementIndex];*/
+		
+		//How to check, if the element is null?
+		/*if (element != nullptr and !element.isDeleted()) {
+			return just<T>(element.getValue());
+		}*/
+		return nothing<T>();
+	}
 	
 	size_t erase(size_t key) {
-		size_t elementIndex = elementHashFunction(key);
-		element<Key, T> element = elements[elementIndex];
-		if (element != nullptr and !element.isDeleted()) {
+		/*size_t elementIndex =*/ elementHashFunction(key);
+		/*element<Key, T> element = elements[elementIndex];*/
+
+		// How to check, if the element is null?
+		/*if (element != nullptr and !element.isDeleted()) {
 			element.markDeleted();
 			return 1;
-		}
+		}*/
 		return 0;
 	}
 };
@@ -158,21 +171,27 @@ public:
 		
     T& operator[](const Key &key) override {
 		size_t preHash = preHashFcn(key);
-		return getValue(preHash);
+		size_t bucketIndex = bucketHashFunction(preHash);
+		bucket<Key, T> bucket = buckets[bucketIndex];
+		return bucket.getValue(preHash);
 	}
 
     T& operator[](Key&& key) override {
 		size_t preHash = preHashFcn(std::move(key));
-		return getValue(preHash);
+		size_t bucketIndex = bucketHashFunction(preHash);
+		bucket<Key, T> bucket = buckets[bucketIndex];
+		return bucket.getValue(preHash);
     }
 
     maybe<T> find(const Key &key) const override {
-		/*size_t preHash =*/ preHashFcn(key);
-		return nothing<T>();
+		size_t preHash = preHashFcn(key);
+		size_t bucketIndex = bucketHashFunction(preHash);
+		bucket<Key, T> bucket = buckets[bucketIndex];
+		return bucket.find(key);
     }
 
     size_t erase(const Key &key) override {
-		size_t preHash = preHashFcn(key);
+		size_t preHash = preHashFcn(std::move(key));
 		size_t bucketIndex = bucketHashFunction(preHash);
 		bucket<Key, T> bucket = buckets[bucketIndex];
 		return bucket.erase(preHash);
@@ -184,13 +203,6 @@ public:
 
     void clear() override { 
 
-	}
-
-private:
-	T& getValue(size_t preHash) {
-		size_t bucketIndex = bucketHashFunction(preHash);
-		bucket<Key, T> bucket = buckets[bucketIndex];
-		return bucket.getValue(preHash);
 	}
 };
 
