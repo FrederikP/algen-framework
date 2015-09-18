@@ -1,10 +1,12 @@
 CXX ?= g++
 
 CFLAGS = -std=c++11 -g -Wall -Wextra -Werror -I..
+LDFLAGS = -lprimesieve
 
 # This is where the test files go
 SRC = maybe.cpp \
-      unordered_map.cpp
+      unordered_map.cpp \
+      fred_hash_map.cpp
 
 BUILDDIR ?= build
 
@@ -22,10 +24,10 @@ build:
 	mkdir -p ${BUILDDIR}
 
 ${BUILDDIR}/%.o: %.cpp build
-	$(CXX) $(CFLAGS) -c $< -o $@
+	$(CXX) $(CFLAGS) -c $< -o $@ $(LDFLAGS)
 
 tests: $(OBJ)
-	$(CXX) $(CFLAGS) -o tests tests.cpp $^
+	$(CXX) $(CFLAGS) -o tests tests.cpp $^ $(LDFLAGS)
 
 clean:
 	rm -rf ${BUILDDIR} tests

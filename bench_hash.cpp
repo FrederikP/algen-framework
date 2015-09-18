@@ -65,9 +65,9 @@ int main(int argc, char** argv) {
     // TODO: add your own implemenation here!
 
     // Add wrappers around std::unordered_map and Google's libsparsehash
-    hashtable::unordered_map<int, int>::register_contenders(contenders);
-    hashtable::dense_hash_map<int, int>::register_contenders(contenders);
-    hashtable::sparse_hash_map<int, int>::register_contenders(contenders);
+    //hashtable::unordered_map<int, int>::register_contenders(contenders);
+    //hashtable::dense_hash_map<int, int>::register_contenders(contenders);
+    //hashtable::sparse_hash_map<int, int>::register_contenders(contenders);
 
 	hashtable::fred_hash_map<int, int>::register_contenders(contenders);
 

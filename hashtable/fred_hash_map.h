@@ -6,11 +6,15 @@
 #include "hashtable.h"
 #include <primesieve.hpp>
 
+#include <iostream>
+
 namespace hashtable {
 
 class outer_universal_hash_fcn {
 public:	
 	outer_universal_hash_fcn(size_t M, size_t numberOfSubBlocks) {
+		size_t max_size = (size_t)-1;
+		std::cout << "Max size_t: " << max_size << "\n";
 		std::vector<size_t> primes;
 		// Choose first prime >= M
 		primesieve::generate_n_primes<size_t>(1, M, &primes);
@@ -49,7 +53,8 @@ public:
 		k = uniform_dist(e1);
 	}
 	size_t operator()(size_t& x) const {
-		return k * x % p;
+		size_t hash = k * x % p;
+		return hash;
 	}
 private:
 	size_t k;
@@ -108,9 +113,6 @@ public:
 		M = initialM;
 		count = 0;
 		s = numberOfSubBlocks;
-		for (size_t i = 0; i < s; i++) {
-			outerTable[i] = outer_table_entry<Key,T>();
-		}
     }
     virtual ~fred_hash_map() = default;
 
@@ -127,23 +129,23 @@ public:
     T& operator[](const Key &key) override {
         size_t preHash = preHashFcn(key);
 		size_t subTableIndex = outerHashFcn(preHash);
-		outer_table_entry< Key, T > outerEntry = outerTable[subTableIndex];
+		outer_table_entry< Key, T >& outerEntry = outerTable[subTableIndex];
 		return outerEntry.getValue(preHash);
 	}
 
     T& operator[](Key&& key) override {
         size_t preHash = preHashFcn(std::move(key));
 		size_t subTableIndex = outerHashFcn(preHash);
-		outer_table_entry< Key, T > outerEntry = outerTable[subTableIndex];
+		outer_table_entry< Key, T >& outerEntry = outerTable[subTableIndex];
 		return outerEntry.getValue(preHash);
     }
 
     maybe<T> find(const Key &key) const override {
-        size_t preHash = preHashFcn(key);
-		size_t subTableIndex = outerHashFcn(preHash);
-		outer_table_entry< Key, T > outerEntry = outerTable[subTableIndex];
-		return just<T>(outerEntry.getValue(preHash));
-		//return nothing<T>();
+        /*size_t preHash = */preHashFcn(key);
+		//size_t subTableIndex = outerHashFcn(preHash);
+		//const outer_table_entry< Key, T >& outerEntry = outerTable[subTableIndex];
+		//return just<T>(outerEntry.getValue(preHash));
+		return nothing<T>();
     }
 
     size_t erase(const Key &key) override {
