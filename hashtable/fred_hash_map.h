@@ -79,8 +79,24 @@ public:
 	Key& getKey() {
 		return key;
 	}
+	maybe<T> find(const Key &requestedKey) const {
+		if (initialized && !deleted) {
+			// If this is not the case something with the dynamic rehashing didn't work out
+			assert(requestedKey == key);
+			return just<T>(t);
+		} else {
+			return nothing<T>();
+		}
+	}
+
 	bool isInitialized() {
 		return initialized;
+	}
+	bool isDeleted() {
+		return deleted;
+	}
+	void remove() {
+		deleted = true;
 	}
 private:
 	Key key;
@@ -106,6 +122,10 @@ public:
 		size_t innerIndex = innerHashFcn(key);
 		inner_table_entry<Key, T>& entry = innerTable[innerIndex];
 		return entry;
+	}
+	maybe<T> find(size_t preHash, const Key &key) const {
+		size_t innerIndex = innerHashFcn(preHash);
+		return innerTable[innerIndex].find(key);
 	}
 private:
 	size_t ml;
@@ -158,16 +178,24 @@ public:
     }
 
     maybe<T> find(const Key &key) const override {
-        /*size_t preHash = */preHashFcn(key);
-		//size_t subTableIndex = outerHashFcn(preHash);
-		//const outer_table_entry< Key, T >& outerEntry = outerTable[subTableIndex];
-		//return just<T>(outerEntry.getValue(preHash));
-		return nothing<T>();
+        size_t preHash = preHashFcn(key);
+		size_t subTableIndex = outerHashFcn(preHash);
+		return outerTable[subTableIndex].find(preHash, key);
     }
 
     size_t erase(const Key &key) override {
-		/*size_t preHash = */preHashFcn(key);
-		return 0;
+		size_t preHash = preHashFcn(key);
+		size_t subTableIndex = outerHashFcn(preHash);
+		outer_table_entry< Key, T >& outerEntry = outerTable[subTableIndex];
+		inner_table_entry< Key, T >& innerEntry = outerEntry[preHash];
+		size_t deletedElements = 0;
+		// If this is not the case something with the dynamic rehashing didn't work out
+		if (innerEntry.isInitialized() && !innerEntry.isDeleted()) {
+			assert(innerEntry.getKey() == key);
+			innerEntry.remove();
+			deletedElements++;
+		}
+		return deletedElements;
     }
 
     size_t size() const override { 
