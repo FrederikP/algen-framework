@@ -13,7 +13,6 @@ namespace hashtable {
 class outer_universal_hash_fcn {
 public:	
 	outer_universal_hash_fcn(size_t M, size_t numberOfSubBlocks) {
-		size_t max_size = (size_t)-1;
 		std::vector<size_t> primes;
 		// Choose first prime >= M
 		primesieve::generate_n_primes<size_t>(1, M, &primes);
@@ -70,15 +69,24 @@ public:
 	inner_table_entry(Key& elementKey, T& elementValue) : key(elementKey), t(elementValue) {
 	}
 	inner_table_entry() : key(0), t(0) {}
-	Key& getKey() {
-		return key;
+	void initialize(Key theKey) {
+		key = theKey;
+		initialized = true;
 	}
 	T& getValue() {
 		return t;
 	}
+	Key& getKey() {
+		return key;
+	}
+	bool isInitialized() {
+		return initialized;
+	}
 private:
 	Key key;
 	T t;
+	bool initialized = false;
+	bool deleted = false;
 };
 
 template <typename Key,
@@ -94,10 +102,10 @@ public:
 		ml = max * (max - 1) + 1;
 		return ml;
 	}
-	T& getValue(size_t key) {
+	inner_table_entry<Key, T>& operator[](size_t key) {
 		size_t innerIndex = innerHashFcn(key);
 		inner_table_entry<Key, T>& entry = innerTable[innerIndex];
-		return entry.getValue();
+		return entry;
 	}
 private:
 	size_t ml;
@@ -135,14 +143,18 @@ public:
         size_t preHash = preHashFcn(key);
 		size_t subTableIndex = outerHashFcn(preHash);
 		outer_table_entry< Key, T >& outerEntry = outerTable[subTableIndex];
-		return outerEntry.getValue(preHash);
+		inner_table_entry< Key, T >& innerEntry = outerEntry[preHash];
+		if (!innerEntry.isInitialized()) {
+			innerEntry.initialize(key);
+		}
+		// If this is not the case something with the dynamic rehashing didn't work out
+		assert(innerEntry.getKey() == key);
+		return innerEntry.getValue();
 	}
 
     T& operator[](Key&& key) override {
-        size_t preHash = preHashFcn(std::move(key));
-		size_t subTableIndex = outerHashFcn(preHash);
-		outer_table_entry< Key, T >& outerEntry = outerTable[subTableIndex];
-		return outerEntry.getValue(preHash);
+		Key movedKey = std::move(key);
+		return (*this)[movedKey];
     }
 
     maybe<T> find(const Key &key) const override {
