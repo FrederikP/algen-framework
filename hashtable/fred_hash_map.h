@@ -56,6 +56,9 @@ public:
 		size_t hash = k * x % p;
 		return hash;
 	}
+	size_t getSize() {
+		return p;
+	}
 private:
 	size_t k;
 	size_t p;
@@ -83,7 +86,7 @@ template <typename Key,
           typename T>
 class outer_table_entry {
 public:
-	outer_table_entry() : innerHashFcn(computeSetAndReturnMl(0)), innerTable(ml) {
+	outer_table_entry() : innerHashFcn(computeSetAndReturnMl(0)), innerTable(innerHashFcn.getSize()) {
 		
 	}
 	size_t computeSetAndReturnMl(size_t initialElementCount) {
@@ -119,10 +122,13 @@ public:
     // Register all contenders in the list
     static void register_contenders(common::contender_list<hashtable<Key, T>> &list) {
         using Factory = common::contender_factory<hashtable<Key, T>>;
-		size_t initialM = 10;
-		size_t s = 100;
         list.register_contender(Factory("fred_hash_map", "fred-hash-map",
-            [initialM, s](){ return new fred_hash_map<Key, T>(initialM, s); }
+            [](){ 
+				size_t initialM = 10;
+				size_t s = 100;
+				fred_hash_map<Key, T>* fredMap= new fred_hash_map<Key, T>(initialM, s); 
+				return fredMap; 
+			}
         ));
     }
 		
