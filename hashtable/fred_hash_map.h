@@ -6,7 +6,7 @@
 #include "hashtable.h"
 #include <primesieve.hpp>
 
-#include <iostream>
+//#include <iostream>
 
 namespace hashtable {
 
@@ -14,7 +14,6 @@ class outer_universal_hash_fcn {
 public:	
 	outer_universal_hash_fcn(size_t M, size_t numberOfSubBlocks) {
 		size_t max_size = (size_t)-1;
-		std::cout << "Max size_t: " << max_size << "\n";
 		std::vector<size_t> primes;
 		// Choose first prime >= M
 		primesieve::generate_n_primes<size_t>(1, M, &primes);
@@ -112,7 +111,7 @@ template <typename Key,
 		  typename OuterHashFcn = outer_universal_hash_fcn>
 class fred_hash_map : public hashtable<Key, T> {
 public:
-    fred_hash_map(size_t initialM, size_t numberOfSubBlocks) : hashtable<Key, T>(), outerHashFcn(initialM, numberOfSubBlocks), outerTable(s) {
+    fred_hash_map(size_t initialM, size_t numberOfSubBlocks) : hashtable<Key, T>(), outerHashFcn(initialM, numberOfSubBlocks), outerTable(numberOfSubBlocks) {
 		M = initialM;
 		count = 0;
 		s = numberOfSubBlocks;
@@ -126,7 +125,7 @@ public:
             [](){ 
 				size_t initialM = 10;
 				size_t s = 100;
-				fred_hash_map<Key, T>* fredMap= new fred_hash_map<Key, T>(initialM, s); 
+				fred_hash_map<Key, T>* fredMap= new fred_hash_map<Key, T>(initialM, s);
 				return fredMap; 
 			}
         ));
