@@ -15,6 +15,9 @@ lib
 *.h~
 *.cpp~
 *.hpp~
+*Makefile~
+core
+vgcore.*
 # Local configuration folder and symbol database
 /.anjuta/
 /.anjuta_sym_db.db
