@@ -166,6 +166,7 @@ public:
 		inner_table_entry< Key, T >& innerEntry = outerEntry[preHash];
 		if (!innerEntry.isInitialized()) {
 			innerEntry.initialize(key);
+			count++;
 		}
 		// If this is not the case something with the dynamic rehashing didn't work out
 		assert(innerEntry.getKey() == key);
@@ -194,6 +195,7 @@ public:
 			assert(innerEntry.getKey() == key);
 			innerEntry.remove();
 			deletedElements++;
+			count--;
 		}
 		return deletedElements;
     }
@@ -203,7 +205,7 @@ public:
 	}
 
     void clear() override { 
-
+		count = 0;
 	}
 
 private:
