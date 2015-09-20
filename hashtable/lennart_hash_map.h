@@ -65,10 +65,11 @@ class element {
 private:
 	Key key;
 	T value;
+	bool initialized;
 	bool deleteFlag;
 public:
-	element(Key& key, T& value) : key(key), value(value), deleteFlag(false) { }
-	element() : key(0), value(0), deleteFlag(false) {}
+	element(Key& key, T& value) : key(key), value(value), initialized(false), deleteFlag(false) { }
+	element() : key(0), value(0), initialized(false), deleteFlag(false) {}
 	
 	Key& getKey() {
 		return key;
@@ -76,6 +77,14 @@ public:
 	
 	T& getValue() {
 		return value;
+	}
+
+	bool isInitialized() {
+		return initialized;
+	}
+
+	void initialize() {
+		initialized = true;
 	}
 
 	bool isDeleted() {
@@ -87,6 +96,7 @@ public:
 	}
 };
 
+#define _unused(x) ((void)x) // Makro to prevent unused parameter errors
 template <typename Key, typename T>
 class bucket {
 private:
@@ -103,32 +113,42 @@ public:
 		elements[size] = { };
 	}
 	
-	T& getValue(size_t key) {
-		size_t elementIndex = elementHashFunction(key);
+	T& getValue(size_t preHash, Key key) {
+		size_t elementIndex = elementHashFunction(preHash);
 		element<Key, T> element = elements[elementIndex];
+		// If this is not the case something with the dynamic rehashing didn't work out
+		assert(element.getKey() == key);
+		_unused(key);
+		if (!element.isInitialized()) {
+			element.initialize();
+		}
 		return element.getValue();
 	}
 
-	maybe<T> find(size_t key) const {
-		/*size_t elementIndex =*/ elementHashFunction(key);
-		/*element<Key, T> element = elements[elementIndex];*/
+	maybe<T> find(size_t preHash, Key key) const {
+		size_t elementIndex = elementHashFunction(preHash);
+		element<Key, T> element = elements[elementIndex];
 		
-		//How to check, if the element is null?
-		/*if (element != nullptr and !element.isDeleted()) {
+		if (element.isInitialized() and !element.isDeleted()) {
+			// If this is not the case something with the dynamic rehashing didn't work out
+			assert(element.getKey() == key);
+			_unused(key);
 			return just<T>(element.getValue());
-		}*/
+		}
 		return nothing<T>();
 	}
 	
-	size_t erase(size_t key) {
-		/*size_t elementIndex =*/ elementHashFunction(key);
-		/*element<Key, T> element = elements[elementIndex];*/
+	size_t erase(size_t preHash, Key key) {
+		size_t elementIndex = elementHashFunction(preHash);
+		element<Key, T> element = elements[elementIndex];
 
-		// How to check, if the element is null?
-		/*if (element != nullptr and !element.isDeleted()) {
+		if (element.isInitialized() and !element.isDeleted()) {
+			// If this is not the case something with the dynamic rehashing didn't work out
+			assert(element.getKey() == key);
+			_unused(key);
 			element.markDeleted();
 			return 1;
-		}*/
+		}
 		return 0;
 	}
 };
@@ -149,10 +169,12 @@ public:
     // Register all contenders in the list
     static void register_contenders(common::contender_list<hashtable<Key, T>> &list) {
         using Factory = common::contender_factory<hashtable<Key, T>>;
-		size_t initialM = 10;
-		size_t s = 100;
         list.register_contender(Factory("DPH_with_array_buckets", "DPH_with_array_buckets",
-            [initialM, s](){ return new DPH_with_array_buckets<Key, T>(initialM, s); }
+            [](){ 
+				size_t initialM = 10;
+				size_t s = 100;
+				return new DPH_with_array_buckets(initialM, s); 
+			}
         ));
     }
 	
@@ -173,28 +195,26 @@ public:
 		size_t preHash = preHashFcn(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
 		bucket<Key, T> bucket = buckets[bucketIndex];
-		return bucket.getValue(preHash);
+		return bucket.getValue(preHash, key);
 	}
 
     T& operator[](Key&& key) override {
-		size_t preHash = preHashFcn(std::move(key));
-		size_t bucketIndex = bucketHashFunction(preHash);
-		bucket<Key, T> bucket = buckets[bucketIndex];
-		return bucket.getValue(preHash);
+		Key movedKey = std::move(key);
+		return (*this)[movedKey];
     }
 
     maybe<T> find(const Key &key) const override {
 		size_t preHash = preHashFcn(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
 		bucket<Key, T> bucket = buckets[bucketIndex];
-		return bucket.find(key);
+		return bucket.find(preHash, key);
     }
 
     size_t erase(const Key &key) override {
 		size_t preHash = preHashFcn(std::move(key));
 		size_t bucketIndex = bucketHashFunction(preHash);
 		bucket<Key, T> bucket = buckets[bucketIndex];
-		return bucket.erase(preHash);
+		return bucket.erase(preHash, key);
     }
 
     size_t size() const override { 
