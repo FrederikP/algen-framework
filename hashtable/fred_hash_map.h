@@ -6,6 +6,8 @@
 #include "hashtable.h"
 #include <primesieve.hpp>
 
+//#include <iostream>
+
 namespace hashtable {
 
 class outer_universal_hash_fcn {
@@ -49,7 +51,11 @@ public:
 		k = uniform_dist(e1);
 	}
 	size_t operator()(size_t& x) const {
-		return k * x % p;
+		size_t hash = k * x % p;
+		return hash;
+	}
+	size_t getSize() {
+		return p;
 	}
 private:
 	size_t k;
@@ -63,22 +69,47 @@ public:
 	inner_table_entry(Key& elementKey, T& elementValue) : key(elementKey), t(elementValue) {
 	}
 	inner_table_entry() : key(0), t(0) {}
-	Key& getKey() {
-		return key;
+	void initialize(Key theKey) {
+		key = theKey;
+		initialized = true;
 	}
 	T& getValue() {
 		return t;
 	}
+	Key& getKey() {
+		return key;
+	}
+	maybe<T> find(const Key &requestedKey) const {
+		if (initialized && !deleted) {
+			// If this is not the case something with the dynamic rehashing didn't work out
+			assert(requestedKey == key);
+			return just<T>(t);
+		} else {
+			return nothing<T>();
+		}
+	}
+
+	bool isInitialized() {
+		return initialized;
+	}
+	bool isDeleted() {
+		return deleted;
+	}
+	void remove() {
+		deleted = true;
+	}
 private:
 	Key key;
 	T t;
+	bool initialized = false;
+	bool deleted = false;
 };
 
 template <typename Key,
           typename T>
 class outer_table_entry {
 public:
-	outer_table_entry() : innerHashFcn(computeSetAndReturnMl(0)), innerTable(ml) {
+	outer_table_entry() : innerHashFcn(computeSetAndReturnMl(0)), innerTable(innerHashFcn.getSize()) {
 		
 	}
 	size_t computeSetAndReturnMl(size_t initialElementCount) {
@@ -87,10 +118,14 @@ public:
 		ml = max * (max - 1) + 1;
 		return ml;
 	}
-	T& getValue(size_t key) {
+	inner_table_entry<Key, T>& operator[](size_t key) {
 		size_t innerIndex = innerHashFcn(key);
 		inner_table_entry<Key, T>& entry = innerTable[innerIndex];
-		return entry.getValue();
+		return entry;
+	}
+	maybe<T> find(size_t preHash, const Key &key) const {
+		size_t innerIndex = innerHashFcn(preHash);
+		return innerTable[innerIndex].find(key);
 	}
 private:
 	size_t ml;
@@ -104,51 +139,63 @@ template <typename Key,
 		  typename OuterHashFcn = outer_universal_hash_fcn>
 class fred_hash_map : public hashtable<Key, T> {
 public:
-    fred_hash_map(size_t initialM, size_t numberOfSubBlocks) : hashtable<Key, T>(), outerHashFcn(initialM, numberOfSubBlocks), outerTable(s) {
+    fred_hash_map(size_t initialM, size_t numberOfSubBlocks) : hashtable<Key, T>(), outerHashFcn(initialM, numberOfSubBlocks), outerTable(numberOfSubBlocks) {
 		M = initialM;
 		count = 0;
 		s = numberOfSubBlocks;
-		for (size_t i = 0; i < s; i++) {
-			outerTable[i] = outer_table_entry<Key,T>();
-		}
     }
     virtual ~fred_hash_map() = default;
 
     // Register all contenders in the list
     static void register_contenders(common::contender_list<hashtable<Key, T>> &list) {
         using Factory = common::contender_factory<hashtable<Key, T>>;
-		size_t initialM = 10;
-		size_t s = 100;
         list.register_contender(Factory("fred_hash_map", "fred-hash-map",
-            [initialM, s](){ return new fred_hash_map<Key, T>(initialM, s); }
+            [](){ 
+				size_t initialM = 10;
+				size_t s = 100;
+				fred_hash_map<Key, T>* fredMap= new fred_hash_map<Key, T>(initialM, s);
+				return fredMap; 
+			}
         ));
     }
 		
     T& operator[](const Key &key) override {
         size_t preHash = preHashFcn(key);
 		size_t subTableIndex = outerHashFcn(preHash);
-		outer_table_entry< Key, T > outerEntry = outerTable[subTableIndex];
-		return outerEntry.getValue(preHash);
+		outer_table_entry< Key, T >& outerEntry = outerTable[subTableIndex];
+		inner_table_entry< Key, T >& innerEntry = outerEntry[preHash];
+		if (!innerEntry.isInitialized()) {
+			innerEntry.initialize(key);
+		}
+		// If this is not the case something with the dynamic rehashing didn't work out
+		assert(innerEntry.getKey() == key);
+		return innerEntry.getValue();
 	}
 
     T& operator[](Key&& key) override {
-        size_t preHash = preHashFcn(std::move(key));
-		size_t subTableIndex = outerHashFcn(preHash);
-		outer_table_entry< Key, T > outerEntry = outerTable[subTableIndex];
-		return outerEntry.getValue(preHash);
+		Key movedKey = std::move(key);
+		return (*this)[movedKey];
     }
 
     maybe<T> find(const Key &key) const override {
         size_t preHash = preHashFcn(key);
 		size_t subTableIndex = outerHashFcn(preHash);
-		outer_table_entry< Key, T > outerEntry = outerTable[subTableIndex];
-		return just<T>(outerEntry.getValue(preHash));
-		//return nothing<T>();
+		return outerTable[subTableIndex].find(preHash, key);
     }
 
     size_t erase(const Key &key) override {
-		/*size_t preHash = */preHashFcn(key);
-		return 0;
+		size_t preHash = preHashFcn(key);
+		size_t subTableIndex = outerHashFcn(preHash);
+		outer_table_entry< Key, T >& outerEntry = outerTable[subTableIndex];
+		inner_table_entry< Key, T >& innerEntry = outerEntry[preHash];
+		size_t deletedElements = 0;
+		// If this is not the case something with the dynamic rehashing didn't work out
+		if (innerEntry.isInitialized() && !innerEntry.isDeleted()) {
+			assert(innerEntry.getKey() == key);
+			innerEntry.remove();
+			deletedElements++;
+		}
+		return deletedElements;
     }
 
     size_t size() const override { 
