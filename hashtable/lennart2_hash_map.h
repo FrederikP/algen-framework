@@ -83,8 +83,8 @@ public:
 		return deleteFlag;
 	}
 
-	void markDeleted() {
-		deleteFlag = true;
+	void setDeleted(bool deleted) {
+		deleteFlag = deleted;
 	}
 };
 
@@ -164,9 +164,13 @@ public:
 		size_t preHash = preHashFunction(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
 		size_t elementIndex = bucketInfos[bucketIndex].index(key);
-		entry<Key, T> entry = entries[elementIndex];
+		entry<Key, T>& entry = entries[elementIndex];
 		if (!entry.isInitialized()) {
 			entry.initialize(key);
+			count++;
+		} else if (entry.isDeleted()) {
+			entry.setDeleted(false);
+			entry.getValue() = 0;
 			count++;
 		}
 		// If this is not the case something with the dynamic rehashing didn't work out
@@ -196,12 +200,12 @@ public:
 		size_t preHash = preHashFunction(std::move(key));
 		size_t bucketIndex = bucketHashFunction(preHash);
 		size_t elementIndex = bucketInfos[bucketIndex].index(key);
-		entry<Key, T> entry = entries[elementIndex];
+		entry<Key, T>& entry = entries[elementIndex];
 
 		if (entry.isInitialized() and !entry.isDeleted()) {
 			// If this is not the case something with the dynamic rehashing didn't work out
 			assert(entry.getKey() == key);
-			entry.markDeleted();
+			entry.setDeleted(true);
 			count--;
 			return 1;
 		}
