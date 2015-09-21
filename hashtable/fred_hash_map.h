@@ -98,6 +98,9 @@ public:
 	void remove() {
 		deleted = true;
 	}
+	void undelete() {
+		deleted = false;
+	}
 private:
 	Key key;
 	T t;
@@ -127,8 +130,21 @@ public:
 		size_t innerIndex = innerHashFcn(preHash);
 		return innerTable[innerIndex].find(key);
 	}
+	void increaseB() {
+		b++;
+	}
+	void decreaseB() {
+		b--;
+	}
+	size_t getNumberOfElements() {
+		return b;
+	}
+	size_t getCapacity() {
+		return ml;
+	}
 private:
 	size_t ml;
+	size_t b = 0;
 	inner_universal_hash_fcn innerHashFcn;
 	std::vector< inner_table_entry<Key, T> > innerTable;
 };
@@ -141,7 +157,6 @@ class fred_hash_map : public hashtable<Key, T> {
 public:
     fred_hash_map(size_t initialM, size_t numberOfSubBlocks) : hashtable<Key, T>(), outerHashFcn(initialM, numberOfSubBlocks), outerTable(numberOfSubBlocks) {
 		M = initialM;
-		count = 0;
 		s = numberOfSubBlocks;
     }
     virtual ~fred_hash_map() = default;
@@ -160,13 +175,42 @@ public:
     }
 		
     T& operator[](const Key &key) override {
-        size_t preHash = preHashFcn(key);
+		size_t preHash = preHashFcn(key);
 		size_t subTableIndex = outerHashFcn(preHash);
 		outer_table_entry< Key, T >& outerEntry = outerTable[subTableIndex];
 		inner_table_entry< Key, T >& innerEntry = outerEntry[preHash];
 		if (!innerEntry.isInitialized()) {
 			innerEntry.initialize(key);
+			numberOfElements++;
 			count++;
+			outerEntry.increaseB();
+		} else if (innerEntry.getKey() != key) {
+			if (innerEntry.isDeleted()) {
+				innerEntry.unDelete();
+				numberOfElements++;
+				count++;
+				outerEntry.increaseB();
+			} else {
+				if (count > M) {
+					rehashAll(&key);
+					// Get result from new structure
+					size_t newSubTableIndex = outerHashFcn(preHash);
+					outer_table_entry< Key, T >& newOuterEntry = outerTable[subTableIndex];
+					inner_table_entry< Key, T >& newInnerEntry = outerEntry[preHash];
+					return newInnerEntry.getValue();
+				} else {
+					if (outerEntry.getNumberOfElements <= outerEntry.getCapacity()) {
+						// Find new sub table hash function
+						
+					} else {
+						if (globalConditionIsBad()) {
+							rehashAll(key);
+						} else {
+							//Double subtable size and find function
+						}
+					}
+				}
+			}		
 		}
 		// If this is not the case something with the dynamic rehashing didn't work out
 		assert(innerEntry.getKey() == key);
@@ -185,27 +229,30 @@ public:
     }
 
     size_t erase(const Key &key) override {
+		count++;
 		size_t preHash = preHashFcn(key);
 		size_t subTableIndex = outerHashFcn(preHash);
 		outer_table_entry< Key, T >& outerEntry = outerTable[subTableIndex];
 		inner_table_entry< Key, T >& innerEntry = outerEntry[preHash];
 		size_t deletedElements = 0;
-		// If this is not the case something with the dynamic rehashing didn't work out
 		if (innerEntry.isInitialized() && !innerEntry.isDeleted()) {
+			// If this is not the case something with the dynamic rehashing didn't work out
 			assert(innerEntry.getKey() == key);
 			innerEntry.remove();
 			deletedElements++;
-			count--;
+			numberOfElements--;
+			outerEntry.decreaseB();
 		}
 		return deletedElements;
     }
 
     size_t size() const override { 
-		return count;
+		return numberOfElements;
 	}
 
     void clear() override { 
 		count = 0;
+		numberOfElements = 0;
 	}
 
 private:
@@ -213,8 +260,17 @@ private:
 	OuterHashFcn outerHashFcn;
 	std::vector< outer_table_entry < Key, T > > outerTable;
 	size_t M;
-	size_t count;
+	size_t count = 0;
 	size_t s;
+	size_t numberOfElements = 0;
+
+	void rehashAll(Key &key) {
+		//TODO
+	}
+	bool globalConditionIsBad() {
+		//TODO
+		return false;
+	}
 };
 
 }
