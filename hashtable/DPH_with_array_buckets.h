@@ -4,172 +4,75 @@
 
 #include "../common/contenders.h"
 #include "hashtable.h"
-#include <primesieve.hpp>
+#include "DPH_Common.h"
 
 using namespace common::monad;
 
 namespace hashtable {
 
-class bucket_hash_function {
-private:
-	size_t random;
-	size_t prime;
-	size_t size;
-	
-public:
-	void initialize(size_t capacity, size_t bucketAmount) {
-		std::vector<size_t> primes;
-		// Choose first prime >= capacity
-		primesieve::generate_n_primes<size_t>(1, capacity, &primes);
-		prime = primes[0];
-		
-		size = bucketAmount;
-		
-		// Seed with a real random value, if available
-		std::random_device device;
-		// Choose a random factor between 1 and prime - 1
-		std::default_random_engine engine(device());
-		std::uniform_int_distribution<size_t> uniform_dist(1, prime - 1);
-		random = uniform_dist(engine);
-	}
-	size_t operator()(size_t& x) const {
-		return (random * x % prime) % size;
-	}
-};
-
-class element_hash_function {
-private:
-	size_t random;
-	size_t prime;
-public:
-	void initialize(size_t size) {
-		std::vector<size_t> primes;
-		// Choose first prime >= M
-		primesieve::generate_n_primes<size_t>(1, size, &primes);
-		prime = primes[0];
-		
-		// Seed with a real random value, if available
-		std::random_device device;
-		// Choose a random factor between 1 and prime - 1
-		std::default_random_engine engine(device());
-		std::uniform_int_distribution<size_t> uniform_dist(1, prime - 1);
-		random = uniform_dist(engine);
-	}
-	size_t getPrime() {
-		return prime;
-	}
-	size_t operator()(size_t& x) const {
-		return random * x % prime;
-	}
-};
-
-template <typename Key, typename T>
-class element {
-private:
-	Key _key;
-	T _value;
-	bool initialized;
-	bool deleteFlag;
-public:
-	element() {
-		_key = Key();
-		_value = T();
-		initialized = false;
-		deleteFlag = false;
-	}
-	element(Key& key, T& value) {
-		_key = key;
-		_value = value;
-		initialized = false;
-		deleteFlag = false;
-	}
-	
-	Key& getKey() {
-		return _key;
-	}
-	
-	T& getValue() {
-		return _value;
-	}
-
-	bool isInitialized() {
-		return initialized;
-	}
-
-	void initialize(Key& key) {
-		_key = key;
-		initialized = true;
-	}
-
-	bool isDeleted() {
-		return deleteFlag;
-	}
-
-	void markDeleted() {
-		deleteFlag = true;
-	}
-};
-
 #define _unused(x) ((void)x) // Makro to prevent unused parameter errors
 template <typename Key, typename T>
-class bucket {
+class array_bucket {
 private:
-	element_hash_function elementHashFunction;
+	prime_generator primes;
+	random_generator randoms;
+	entry_hash_function entryHashFunction;
 	size_t size;
 	size_t _count;
-	element<Key, T>* elements;
+	bucket_entry<Key, T>* entries;
 public:
-	bucket() : bucket(0) { }
-	bucket(size_t initialElementAmount) {
-		_count = 0;
-		size_t min = 10;
-		size_t max = std::max(min, initialElementAmount);
-		size_t intendedSize = max * (max - 1) + 1;
-		elementHashFunction.initialize(intendedSize);
-		size = elementHashFunction.getPrime();
+	array_bucket() : array_bucket(0) { }
+	array_bucket(size_t initialElementAmount) {
+		size_t intendedBucketLength = std::max(size_t(10), initialElementAmount);
+		intendedBucketLength = intendedBucketLength * (intendedBucketLength - 1) + 1;
+		size = primes(intendedBucketLength);
 
-		elements = new element<Key, T>[size];
+		size_t random = randoms(1, size - 1);
+		entryHashFunction.setParameters(random, size);
+
+		_count = 0;
+		entries = new bucket_entry<Key, T>[size];
 	}
 	
 	T& getValue(size_t preHash, Key key) {
-		size_t elementIndex = elementHashFunction(preHash);
-		element<Key, T>& elem = elements[elementIndex];
-		if (!elem.isInitialized()) {
-			elem.initialize(key);
+		size_t elementIndex = entryHashFunction(preHash);
+		bucket_entry<Key, T>& entry = entries[elementIndex];
+		if (!entry.isInitialized()) {
+			entry.initialize(key);
 			_count++;
-		} else if (elem.isDeleted()) {
-			elem = element<Key, T>();
-			elem.initialize(key);
+		} else if (entry.isDeleted()) {
+			entry = bucket_entry<Key, T>();
+			entry.initialize(key);
 			_count++;
 		}
 		// If this is not the case something with the dynamic rehashing didn't work out
-		assert(elem.getKey() == key);
+		assert(entry.getKey() == key);
 		_unused(key);
-		return elem.getValue();
+		return entry.getValue();
 	}
 
 	maybe<T> find(size_t preHash, Key key) const {
-		size_t elementIndex = elementHashFunction(preHash);
-		element<Key, T> element = elements[elementIndex];
+		size_t elementIndex = entryHashFunction(preHash);
+		bucket_entry<Key, T> entry = entries[elementIndex];
 		
-		if (element.isInitialized() and !element.isDeleted()) {
+		if (entry.isInitialized() and !entry.isDeleted()) {
 			// If this is not the case something with the dynamic rehashing didn't work out
-			assert(element.getKey() == key);
+			assert(entry.getKey() == key);
 			_unused(key);
-			return just<T>(element.getValue());
+			return just<T>(entry.getValue());
 		}
 		return nothing<T>();
 	}
 	
 	size_t erase(size_t preHash, Key key) {
-		size_t elementIndex = elementHashFunction(preHash);
-		element<Key, T>& element = elements[elementIndex];
+		size_t elementIndex = entryHashFunction(preHash);
+		bucket_entry<Key, T>& entry = entries[elementIndex];
 
-		if (element.isInitialized() and !element.isDeleted()) {
+		if (entry.isInitialized() and !entry.isDeleted()) {
 			// If this is not the case something with the dynamic rehashing didn't work out
-			assert(element.getKey() == key);
+			assert(entry.getKey() == key);
 			_unused(key);
-			element.markDeleted();
+			entry.markDeleted();
 			_count--;
 			return 1;
 		}
@@ -181,7 +84,7 @@ public:
 	}
 
 	void clear() {
-		elements = new element<Key, T>[size];
+		entries = new bucket_entry<Key, T>[size];
 		_count = 0;
 	}
 };
@@ -189,11 +92,13 @@ public:
 template <typename Key, typename T, typename PreHashFcn = std::hash<Key>>
 class DPH_with_array_buckets : public hashtable<Key, T> { // DPH = Dynamic Perfect Hashing
 private:
+	prime_generator primes;
+	random_generator randoms;
 	PreHashFcn preHashFcn;
 	bucket_hash_function bucketHashFunction;
 	size_t capacity;
 	size_t bucketAmount;
-	bucket<Key, T>* buckets;
+	array_bucket<Key, T>* buckets;
 	
 public:
     virtual ~DPH_with_array_buckets() = default;
@@ -214,19 +119,21 @@ public:
 		capacity = initialElementAmount;
 		bucketAmount = initialBucketAmount;
 
-		bucketHashFunction.initialize(capacity, bucketAmount);
+		size_t prime = primes(capacity);
+		size_t random = randoms(1, prime - 1);
+		bucketHashFunction.setParameters(random, prime, bucketAmount);
 
 		size_t initialElementPerBucketAmount = capacity / bucketAmount;
-		buckets = new bucket<Key, T>[bucketAmount];
+		buckets = new array_bucket<Key, T>[bucketAmount];
 		for (size_t i = 0; i < bucketAmount; i++) {
-			buckets[i] = bucket<Key, T>(initialElementPerBucketAmount);
+			buckets[i] = array_bucket<Key, T>(initialElementPerBucketAmount);
 		}
     }
 		
     T& operator[](const Key &key) override {
 		size_t preHash = preHashFcn(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
-		bucket<Key, T>& bucket = buckets[bucketIndex];
+		array_bucket<Key, T>& bucket = buckets[bucketIndex];
 		return bucket.getValue(preHash, key);
 	}
 
@@ -238,14 +145,14 @@ public:
     maybe<T> find(const Key &key) const override {
 		size_t preHash = preHashFcn(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
-		bucket<Key, T>& bucket = buckets[bucketIndex];
+		array_bucket<Key, T>& bucket = buckets[bucketIndex];
 		return bucket.find(preHash, key);
     }
 
     size_t erase(const Key &key) override {
 		size_t preHash = preHashFcn(std::move(key));
 		size_t bucketIndex = bucketHashFunction(preHash);
-		bucket<Key, T>& bucket = buckets[bucketIndex];
+		array_bucket<Key, T>& bucket = buckets[bucketIndex];
 		return bucket.erase(preHash, key);
     }
 
