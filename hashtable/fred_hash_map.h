@@ -98,7 +98,7 @@ public:
 	void remove() {
 		deleted = true;
 	}
-	void undelete() {
+	void unDelete() {
 		deleted = false;
 	}
 private:
@@ -157,6 +157,7 @@ class fred_hash_map : public hashtable<Key, T> {
 public:
     fred_hash_map(size_t initialM, size_t numberOfSubBlocks) : hashtable<Key, T>(), outerHashFcn(initialM, numberOfSubBlocks), outerTable(numberOfSubBlocks) {
 		M = initialM;
+		iniM = initialM;
 		s = numberOfSubBlocks;
     }
     virtual ~fred_hash_map() = default;
@@ -184,22 +185,24 @@ public:
 			numberOfElements++;
 			count++;
 			outerEntry.increaseB();
+		} else if (innerEntry.isDeleted() && innerEntry.getKey() == key) {
+			innerEntry.unDelete();
+			numberOfElements++;
+			count++;
+			outerEntry.increaseB();
 		} else if (innerEntry.getKey() != key) {
 			if (innerEntry.isDeleted()) {
-				innerEntry.unDelete();
-				numberOfElements++;
-				count++;
-				outerEntry.increaseB();
+
 			} else {
 				if (count > M) {
-					rehashAll(&key);
+					rehashAll(key);
 					// Get result from new structure
 					size_t newSubTableIndex = outerHashFcn(preHash);
 					outer_table_entry< Key, T >& newOuterEntry = outerTable[subTableIndex];
 					inner_table_entry< Key, T >& newInnerEntry = outerEntry[preHash];
 					return newInnerEntry.getValue();
 				} else {
-					if (outerEntry.getNumberOfElements <= outerEntry.getCapacity()) {
+					if (outerEntry.getNumberOfElements() <= outerEntry.getCapacity()) {
 						// Find new sub table hash function
 						
 					} else {
@@ -253,6 +256,9 @@ public:
     void clear() override { 
 		count = 0;
 		numberOfElements = 0;
+		M = iniM;
+		outerHashFcn = OuterHashFcn(M, s);
+		outerTable = std::vector< outer_table_entry < Key, T > >(s);
 	}
 
 private:
@@ -260,11 +266,13 @@ private:
 	OuterHashFcn outerHashFcn;
 	std::vector< outer_table_entry < Key, T > > outerTable;
 	size_t M;
+	size_t iniM;
 	size_t count = 0;
 	size_t s;
 	size_t numberOfElements = 0;
 
-	void rehashAll(Key &key) {
+	void rehashAll(const Key &key) {
+		Key bla = key;
 		//TODO
 	}
 	bool globalConditionIsBad() {
