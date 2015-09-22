@@ -5,7 +5,7 @@
 SCENARIO("fred_hash_map's basic functions work", "[hashtable]") {
 	GIVEN("A fred_hash_map") {
 		hashtable::fred_hash_map<unsigned int, unsigned int> m(100, 10);
-		const size_t n = 100;
+		const size_t n = 96;
 		for (size_t i = 0; i < n; ++i) {
 			m[i] = i*i;
 		}
@@ -16,7 +16,7 @@ SCENARIO("fred_hash_map's basic functions work", "[hashtable]") {
 				CHECK(m[1] == 1);
 				CHECK(m[2] == 4);
 				CHECK(m[10] == 100);
-				CHECK(m[99] == 9801);
+				CHECK(m[95] == 9025);
 			}
 		}
 
@@ -72,6 +72,64 @@ SCENARIO("fred_hash_map's basic functions work", "[hashtable]") {
 			}
 			AND_THEN("We won't be able to find the elements any more") {
 				CHECK(m.find(0) == nothing<unsigned int>());
+			}
+		}
+	}
+}
+
+SCENARIO("fred_hash_map with string keys or values", "[hashtable]") {
+	GIVEN("an fred_hash_map with string keys and int values") {
+		hashtable::fred_hash_map<std::string, int> m(100, 10);
+		WHEN("We insert keys") {
+			m["foo"] = 1;
+			m["bar"] = 2;
+			THEN("We can retrieve them again") {
+				CHECK(m["foo"] == 1);
+				CHECK(m["bar"] == 2);
+			}
+			AND_THEN("We can find them") {
+				CHECK(m.find("foo") == just<int>(1));
+				CHECK(m.find("bar") == just<int>(2));
+			}
+			AND_THEN("Nonexistant keys are not found") {
+				CHECK(m.find("baz") == nothing<int>());
+			}
+		}
+		WHEN("We delete keys") {
+			m["foo"] = 1;
+			m["bar"] = 2;
+			m.erase("foo");
+			THEN("They are gone") {
+				CHECK(m.find("foo") == nothing<int>());
+			} AND_THEN("The other ones are still there") {
+				CHECK(m.find("bar") == just<int>(2));
+			}
+		}
+	}
+
+	GIVEN("an unordered map with string keys and values") {
+		hashtable::fred_hash_map<std::string, std::string> m(100, 10);
+		WHEN("We insert keys") {
+			m["foo"] = "oof";
+			m["bar"] = "baz";
+			THEN("We can retrieve them again") {
+				CHECK(m["foo"] == "oof");
+				CHECK(m["bar"] == "baz");
+			}
+			AND_THEN("We can find them") {
+				CHECK(m.find("foo") == just<std::string>("oof"));
+				CHECK(m.find("bar") == just<std::string>("baz"));
+			}
+		}
+		WHEN("We delete keys") {
+			m["foo"] = "oof";
+			m["bar"] = "baz";
+			m.erase("foo");
+			THEN("They are gone") {
+				CHECK(m.find("foo") != just<std::string>("oof"));
+				CHECK(m.find("foo") == nothing<std::string>());
+			} AND_THEN("The other ones are still there") {
+				CHECK(m.find("bar") == just<std::string>("baz"));
 			}
 		}
 	}
