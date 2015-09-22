@@ -96,16 +96,20 @@ public:
     T& operator[](const Key &key) override {
 		size_t preHash = preHashFunction(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
-		size_t elementIndex = bucketInfos[bucketIndex].index(preHash);
+		bucket_info& bucket = bucketInfos[bucketIndex];
+		size_t elementIndex = bucket.index(preHash);
 		bucket_entry<Key, T>& entry = entries[elementIndex];
 		if (!entry.isInitialized()) {
 			entry.initialize(key);
 			_elementAmount++;
 			M++;
+			bucket.b++;
 		} else if (entry.isDeleted()) {
 			entry = bucket_entry<Key, T>();
 			entry.initialize(key);
 			_elementAmount++;
+			M++;
+			bucket.b++;
 		}
 		// If this is not the case something with the dynamic rehashing didn't work out
 		assert(entry.getKey() == key);
@@ -133,7 +137,8 @@ public:
     size_t erase(const Key &key) override {
 		size_t preHash = preHashFunction(std::move(key));
 		size_t bucketIndex = bucketHashFunction(preHash);
-		size_t elementIndex = bucketInfos[bucketIndex].index(preHash);
+		bucket_info& bucket = bucketInfos[bucketIndex];
+		size_t elementIndex = bucket.index(preHash);
 		bucket_entry<Key, T>& entry = entries[elementIndex];
 
 		if (entry.isInitialized() and !entry.isDeleted()) {
@@ -141,6 +146,8 @@ public:
 			assert(entry.getKey() == key);
 			entry.markDeleted();
 			_elementAmount--;
+			M++;
+			bucket.b++;
 			return 1;
 		}
 		return 0;
@@ -158,7 +165,7 @@ public:
 
 private:
 	size_t calculateM(size_t elementAmount) {
-		return (1 + c) + elementAmount;
+		return (1 + c) * elementAmount;
 	}
 };
 
