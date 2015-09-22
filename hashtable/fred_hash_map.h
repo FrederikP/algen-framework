@@ -83,6 +83,7 @@ public:
 		if (initialized && !deleted) {
 			// If this is not the case something with the dynamic rehashing didn't work out
 			assert(requestedKey == key);
+			((void) requestedKey);
 			return just<T>(t);
 		} else {
 			return nothing<T>();

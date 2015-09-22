@@ -14,6 +14,7 @@
 
 #include "hashtable/dense_hash_map.h"
 #include "hashtable/sparse_hash_map.h"
+#include "hashtable/DPH_Common.h"
 #include "hashtable/fred_hash_map.h"
 #include "hashtable/DPH_with_array_buckets.h"
 #include "hashtable/DPH_with_single_vector.h"

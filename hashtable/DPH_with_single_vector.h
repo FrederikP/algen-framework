@@ -12,15 +12,22 @@ namespace hashtable {
 
 class bucket_info {
 public:
+	size_t M;
+	size_t b;
 	size_t start;
 	size_t length;
-	entry_hash_function hashFunction;
+	size_t count;
+	hash_function hashFunction;
 
-	bucket_info() : hashFunction(0, 0) { }
+	bucket_info() { }
 
-	bucket_info(size_t bucketStart, size_t primeLength, size_t random) : hashFunction(random, primeLength) {
+	bucket_info(size_t bucketM, size_t bucketStart, size_t bucketLength, size_t random, size_t prime) {
+		M = bucketM;
+		b = 0;
 		start = bucketStart;
-		length = primeLength;
+		length = bucketLength;
+		count = 0;
+		hashFunction.setParameters(random, prime, length);
 	}
 
 	size_t index(size_t preHash) const {
@@ -34,14 +41,16 @@ template <typename Key, typename T,
 		  typename PreHashFcn = std::hash<Key>>
 class DPH_with_single_vector : public hashtable<Key, T> { // DPH = Dynamic Perfect Hashing
 private:
-	size_t capacity;
-	size_t count;
+	size_t c;
+	size_t M;
 	size_t bucketAmount;
+	size_t _elementAmount;
 
 	prime_generator primes;
 	random_generator randoms;
+	
 	PreHashFcn preHashFunction;
-	bucket_hash_function bucketHashFunction;
+	hash_function bucketHashFunction;
 	std::vector<bucket_info> bucketInfos;
 	std::vector< bucket_entry< Key, T > > entries;
 	
@@ -61,27 +70,27 @@ public:
     }
 	
     DPH_with_single_vector(size_t initialElementAmount, size_t initialBucketAmount) : hashtable<Key, T>(), bucketInfos(initialBucketAmount) {
-		capacity = initialElementAmount;
-		count = 0;
+		c = 1;
+		M = calculateM(initialElementAmount);
+		_elementAmount = 0;
 		bucketAmount = initialBucketAmount;
 
-		size_t prime = primes(capacity);
+		size_t prime = primes(initialElementAmount);
 		size_t random = randoms(1, prime - 1);
 		bucketHashFunction.setParameters(random, prime, bucketAmount);
 
 		size_t initialElementPerBucketAmount = initialElementAmount / initialBucketAmount;
-		size_t intendedBucketLength = std::max(size_t(10), initialElementPerBucketAmount);
-		intendedBucketLength = intendedBucketLength * (intendedBucketLength - 1) + 1;
-		size_t initialBucketLength = primes(intendedBucketLength);
+		size_t bucketM = std::max(size_t(10), initialElementPerBucketAmount);
+		size_t bucketLength = 2 * bucketM * (bucketM - 1);
+		size_t bucketPrime = primes(bucketLength);
 		for(size_t i = 0; i < bucketAmount; i++) {
-			size_t bucketStart = i * initialBucketLength;
-			size_t bucketLength = initialBucketLength;
-			size_t random = randoms(1, initialBucketLength - 1);
+			size_t bucketStart = i == 0 ? 0 : i * bucketLength;
+			size_t random = randoms(1, bucketPrime - 1);
 
-			bucketInfos[i] = bucket_info(bucketStart, bucketLength, random);
+			bucketInfos[i] = bucket_info(bucketM, bucketStart, bucketLength, random, bucketPrime);
 		}
 
-		entries = std::vector< bucket_entry< Key, T > >(bucketAmount * initialBucketLength);
+		entries = std::vector< bucket_entry< Key, T > >(bucketAmount * bucketLength);
     }
 		
     T& operator[](const Key &key) override {
@@ -91,11 +100,12 @@ public:
 		bucket_entry<Key, T>& entry = entries[elementIndex];
 		if (!entry.isInitialized()) {
 			entry.initialize(key);
-			count++;
+			_elementAmount++;
+			M++;
 		} else if (entry.isDeleted()) {
 			entry = bucket_entry<Key, T>();
 			entry.initialize(key);
-			count++;
+			_elementAmount++;
 		}
 		// If this is not the case something with the dynamic rehashing didn't work out
 		assert(entry.getKey() == key);
@@ -130,20 +140,25 @@ public:
 			// If this is not the case something with the dynamic rehashing didn't work out
 			assert(entry.getKey() == key);
 			entry.markDeleted();
-			count--;
+			_elementAmount--;
 			return 1;
 		}
 		return 0;
     }
 
     size_t size() const override {
-		return count;
+		return _elementAmount;
 	}
 
     void clear() override { 
 		size_t entriesCapacity = entries.capacity();
 		entries = std::vector< bucket_entry< Key, T > >(entriesCapacity);
-		count = 0;
+		_elementAmount = 0;
+	}
+
+private:
+	size_t calculateM(size_t elementAmount) {
+		return (1 + c) + elementAmount;
 	}
 };
 

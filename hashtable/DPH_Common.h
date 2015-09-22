@@ -8,6 +8,29 @@ using namespace common::monad;
 
 namespace hashtable {
 
+class hash_function {
+private:
+	size_t _random;
+	size_t _prime;
+	size_t _size;
+	
+public:
+	hash_function() : hash_function(0, 0, 0) { }
+	hash_function(size_t random, size_t prime, size_t size) {
+		setParameters(random, prime, size);
+	}
+	void setParameters(size_t random, size_t prime, size_t size) {
+		_random = random;
+		_prime = prime;
+		_size = size;
+	}
+	size_t operator()(size_t& x) const {
+		assert(_random >= size_t(1) and _random <= (_prime - 1));
+		assert(_prime >= _size);
+		return (_random * x % _prime) % _size;
+	}
+};
+
 class bucket_hash_function {
 private:
 	size_t _random;
