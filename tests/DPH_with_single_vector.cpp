@@ -1,6 +1,5 @@
 #include "catch.hpp"
-
-#include <hashtable/lennart2_hash_map.h>
+#include "hashtable/DPH_with_single_vector.h"
 
 SCENARIO("DPH_with_single_vector basic functions work", "[hashtable]") {
 	GIVEN("A DPH_with_single_vector") {

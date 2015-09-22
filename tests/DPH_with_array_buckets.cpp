@@ -1,6 +1,5 @@
 #include "catch.hpp"
-
-#include <hashtable/lennart_hash_map.h>
+#include "hashtable/DPH_with_array_buckets.h"
 
 SCENARIO("DPH_with_array_buckets basic functions work", "[hashtable]") {
 	GIVEN("A DPH_with_array_buckets") {
