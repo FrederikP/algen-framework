@@ -72,8 +72,8 @@ private:
 	bool deleteFlag;
 public:
 	element() {
-		_key = 0;
-		_value = 0;
+		_key = Key();
+		_value = T();
 		initialized = false;
 		deleteFlag = false;
 	}
@@ -129,22 +129,23 @@ public:
 		size = elementHashFunction.getPrime();
 
 		elements = new element<Key, T>[size];
-		for(size_t i = 0; i < size; i++) {
-			elements[i] = element<Key, T>();
-		}
 	}
 	
 	T& getValue(size_t preHash, Key key) {
 		size_t elementIndex = elementHashFunction(preHash);
-		element<Key, T> element = elements[elementIndex];
-		if (!element.isInitialized()) {
-			element.initialize(key);
+		element<Key, T>& elem = elements[elementIndex];
+		if (!elem.isInitialized()) {
+			elem.initialize(key);
+			_count++;
+		} else if (elem.isDeleted()) {
+			elem = element<Key, T>();
+			elem.initialize(key);
 			_count++;
 		}
 		// If this is not the case something with the dynamic rehashing didn't work out
-		assert(element.getKey() == key);
+		assert(elem.getKey() == key);
 		_unused(key);
-		return element.getValue();
+		return elem.getValue();
 	}
 
 	maybe<T> find(size_t preHash, Key key) const {
@@ -162,7 +163,7 @@ public:
 	
 	size_t erase(size_t preHash, Key key) {
 		size_t elementIndex = elementHashFunction(preHash);
-		element<Key, T> element = elements[elementIndex];
+		element<Key, T>& element = elements[elementIndex];
 
 		if (element.isInitialized() and !element.isDeleted()) {
 			// If this is not the case something with the dynamic rehashing didn't work out
@@ -177,6 +178,11 @@ public:
 
 	size_t count() {
 		return _count;
+	}
+
+	void clear() {
+		elements = new element<Key, T>[size];
+		_count = 0;
 	}
 };
 
@@ -220,7 +226,7 @@ public:
     T& operator[](const Key &key) override {
 		size_t preHash = preHashFcn(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
-		bucket<Key, T> bucket = buckets[bucketIndex];
+		bucket<Key, T>& bucket = buckets[bucketIndex];
 		return bucket.getValue(preHash, key);
 	}
 
@@ -232,14 +238,14 @@ public:
     maybe<T> find(const Key &key) const override {
 		size_t preHash = preHashFcn(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
-		bucket<Key, T> bucket = buckets[bucketIndex];
+		bucket<Key, T>& bucket = buckets[bucketIndex];
 		return bucket.find(preHash, key);
     }
 
     size_t erase(const Key &key) override {
 		size_t preHash = preHashFcn(std::move(key));
 		size_t bucketIndex = bucketHashFunction(preHash);
-		bucket<Key, T> bucket = buckets[bucketIndex];
+		bucket<Key, T>& bucket = buckets[bucketIndex];
 		return bucket.erase(preHash, key);
     }
 
@@ -251,8 +257,10 @@ public:
 		return overallCount;
 	}
 
-    void clear() override { 
-
+    void clear() override {
+		for (size_t i = 0; i < bucketAmount; i++) {
+			buckets[i].clear();
+		}
 	}
 };
 

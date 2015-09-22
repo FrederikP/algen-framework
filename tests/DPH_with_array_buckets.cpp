@@ -5,7 +5,7 @@
 SCENARIO("DPH_with_array_buckets basic functions work", "[hashtable]") {
 	GIVEN("A DPH_with_array_buckets") {
 		hashtable::DPH_with_array_buckets<unsigned int, unsigned int> m(100, 10);
-		const size_t n = 100;
+		const size_t n = 96;
 		for (size_t i = 0; i < n; ++i) {
 			m[i] = i*i;
 		}
@@ -16,7 +16,7 @@ SCENARIO("DPH_with_array_buckets basic functions work", "[hashtable]") {
 				CHECK(m[1] == 1);
 				CHECK(m[2] == 4);
 				CHECK(m[10] == 100);
-				CHECK(m[99] == 9801);
+				CHECK(m[95] == 9025);
 			}
 		}
 
