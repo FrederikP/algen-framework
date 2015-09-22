@@ -134,3 +134,27 @@ SCENARIO("DPH_with_single_vector with string keys or values", "[hashtable]") {
 		}
 	}
 }
+
+SCENARIO("DPH_with_single_vector 0/bucket size hashing failure", "[hashtable]") {
+	GIVEN("A DPH_with_single_vector") {
+		hashtable::DPH_with_single_vector<int, std::string> m(97, 10);
+		m[0] = "Null";
+		m[3] = "Drei";
+		m[55] = "Fünfundfünfzig";
+
+		WHEN("We ask for the elements") {
+			THEN("Their values are correct") {
+				CHECK(m[0] == "Null");
+				CHECK(m[3] == "Drei");
+				CHECK(m[55] == "Fünfundfünfzig");
+			}
+		}
+		WHEN("We insert an element, that causes a conflict") {
+			m[97] = "Conflict with key 0";
+			THEN("Both values can be found") {
+				CHECK(m[0] == "Null");
+				CHECK(m[97] == "Conflict with key 0");
+			}
+		}
+	}
+}
