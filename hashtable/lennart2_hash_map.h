@@ -42,20 +42,20 @@ public:
 };
 
 template <typename Key, typename T>
-class entry {
+class value_entry {
 private:
 	Key _key;
 	T _value;
 	bool initialized;
 	bool deleteFlag;
 public:
-	entry() {
-		_key = 0;
-		_value = 0;
+	value_entry() {
+		_key = Key();
+		_value = T();
 		initialized = false;
 		deleteFlag = false;
 	}
-	entry(Key& key, T& value) {
+	value_entry(Key& key, T& value) {
 		_key = key;
 		_value = value;
 		initialized = false;
@@ -119,7 +119,7 @@ private:
 	PreHashFcn preHashFunction;
 	sized_hash_function bucketHashFunction;
 	std::vector<bucket_info> bucketInfos;
-	std::vector< entry< Key, T > > entries;
+	std::vector< value_entry< Key, T > > entries;
 	
 public:
     virtual ~DPH_with_single_vector() = default;
@@ -157,20 +157,20 @@ public:
 			bucketInfos[i] = bucket_info(bucketStart, bucketLength, random);
 		}
 
-		entries = std::vector< entry< Key, T > >(bucketAmount * initialBucketLength);
+		entries = std::vector< value_entry< Key, T > >(bucketAmount * initialBucketLength);
     }
 		
     T& operator[](const Key &key) override {
 		size_t preHash = preHashFunction(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
 		size_t elementIndex = bucketInfos[bucketIndex].index(preHash);
-		entry<Key, T>& entry = entries[elementIndex];
+		value_entry<Key, T>& entry = entries[elementIndex];
 		if (!entry.isInitialized()) {
 			entry.initialize(key);
 			count++;
 		} else if (entry.isDeleted()) {
-			entry.setDeleted(false);
-			entry.getValue() = 0;
+			entry = value_entry<Key, T>();
+			entry.initialize(key);
 			count++;
 		}
 		// If this is not the case something with the dynamic rehashing didn't work out
@@ -187,7 +187,7 @@ public:
 		size_t preHash = preHashFunction(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
 		size_t elementIndex = bucketInfos[bucketIndex].index(preHash);
-		entry<Key, T> entry = entries[elementIndex];
+		value_entry<Key, T> entry = entries[elementIndex];
 		if (entry.isInitialized() and !entry.isDeleted()) {
 			// If this is not the case something with the dynamic rehashing didn't work out
 			assert(entry.getKey() == key);
@@ -200,7 +200,7 @@ public:
 		size_t preHash = preHashFunction(std::move(key));
 		size_t bucketIndex = bucketHashFunction(preHash);
 		size_t elementIndex = bucketInfos[bucketIndex].index(preHash);
-		entry<Key, T>& entry = entries[elementIndex];
+		value_entry<Key, T>& entry = entries[elementIndex];
 
 		if (entry.isInitialized() and !entry.isDeleted()) {
 			// If this is not the case something with the dynamic rehashing didn't work out
@@ -218,7 +218,7 @@ public:
 
     void clear() override { 
 		size_t entriesCapacity = entries.capacity();
-		entries = std::vector< entry< Key, T > >(entriesCapacity);
+		entries = std::vector< value_entry< Key, T > >(entriesCapacity);
 		count = 0;
 	}
 
