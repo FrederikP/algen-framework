@@ -163,7 +163,7 @@ public:
     T& operator[](const Key &key) override {
 		size_t preHash = preHashFunction(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
-		size_t elementIndex = bucketInfos[bucketIndex].index(key);
+		size_t elementIndex = bucketInfos[bucketIndex].index(preHash);
 		entry<Key, T>& entry = entries[elementIndex];
 		if (!entry.isInitialized()) {
 			entry.initialize(key);
@@ -186,7 +186,7 @@ public:
     maybe<T> find(const Key &key) const override {
 		size_t preHash = preHashFunction(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
-		size_t elementIndex = bucketInfos[bucketIndex].index(key);
+		size_t elementIndex = bucketInfos[bucketIndex].index(preHash);
 		entry<Key, T> entry = entries[elementIndex];
 		if (entry.isInitialized() and !entry.isDeleted()) {
 			// If this is not the case something with the dynamic rehashing didn't work out
@@ -199,7 +199,7 @@ public:
     size_t erase(const Key &key) override {
 		size_t preHash = preHashFunction(std::move(key));
 		size_t bucketIndex = bucketHashFunction(preHash);
-		size_t elementIndex = bucketInfos[bucketIndex].index(key);
+		size_t elementIndex = bucketInfos[bucketIndex].index(preHash);
 		entry<Key, T>& entry = entries[elementIndex];
 
 		if (entry.isInitialized() and !entry.isDeleted()) {
