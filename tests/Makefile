@@ -6,7 +6,8 @@ LDFLAGS = -lprimesieve
 # This is where the test files go
 SRC = maybe.cpp \
       unordered_map.cpp \
-      fred_hash_map.cpp
+      DPH_with_single_vector.cpp \
+	  DPH_with_array_buckets.cpp
 
 BUILDDIR ?= build
 

@@ -83,6 +83,7 @@ public:
 		if (initialized && !deleted) {
 			// If this is not the case something with the dynamic rehashing didn't work out
 			assert(requestedKey == key);
+			((void) requestedKey);
 			return just<T>(t);
 		} else {
 			return nothing<T>();
@@ -197,7 +198,7 @@ public:
 				if (count > M) {
 					rehashAll(key);
 					// Get result from new structure
-					size_t newSubTableIndex = outerHashFcn(preHash);
+					/*size_t newSubTableIndex =*/ outerHashFcn(preHash);
 					outer_table_entry< Key, T >& newOuterEntry = outerTable[subTableIndex];
 					inner_table_entry< Key, T >& newInnerEntry = outerEntry[preHash];
 					return newInnerEntry.getValue();
@@ -273,6 +274,7 @@ private:
 
 	void rehashAll(const Key &key) {
 		Key bla = key;
+		((void)bla);
 		//TODO
 	}
 	bool globalConditionIsBad() {
