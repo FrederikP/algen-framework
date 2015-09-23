@@ -68,7 +68,7 @@ class inner_table_entry{
 public:
 	inner_table_entry(Key& elementKey, T& elementValue) : key(elementKey), t(elementValue) {
 	}
-	inner_table_entry() : key(0), t(0) {}
+	inner_table_entry() : key(), t() {}
 	void initialize(Key theKey) {
 		key = theKey;
 		initialized = true;

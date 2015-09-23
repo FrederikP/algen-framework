@@ -78,7 +78,7 @@ SCENARIO("fred_hash_map's basic functions work", "[hashtable]") {
 }
 
 SCENARIO("fred_hash_map with string keys or values", "[hashtable]") {
-	GIVEN("an fred_hash_map with string keys and int values") {
+	GIVEN("a fred_hash_map with string keys and int values") {
 		hashtable::fred_hash_map<std::string, int> m(100, 10);
 		WHEN("We insert keys") {
 			m["foo"] = 1;
@@ -107,7 +107,7 @@ SCENARIO("fred_hash_map with string keys or values", "[hashtable]") {
 		}
 	}
 
-	GIVEN("an unordered map with string keys and values") {
+	GIVEN("a fred_hash_map with string keys and values") {
 		hashtable::fred_hash_map<std::string, std::string> m(100, 10);
 		WHEN("We insert keys") {
 			m["foo"] = "oof";
