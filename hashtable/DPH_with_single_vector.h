@@ -43,6 +43,8 @@ class DPH_with_single_vector : public hashtable<Key, T> { // DPH = Dynamic Perfe
 private:
 	size_t c;
 	size_t M;
+	size_t count;
+	
 	size_t bucketAmount;
 	size_t _elementAmount;
 
@@ -63,17 +65,16 @@ public:
         list.register_contender(Factory("DPH_with_single_vector", "DPH_with_single_vector",
             [](){ 
 				size_t initialElementAmount = 1000;
-				size_t initialBucketAmount = 100;
-				return new DPH_with_single_vector(initialElementAmount, initialBucketAmount); 
+				return new DPH_with_single_vector(initialElementAmount); 
 			}
         ));
     }
 	
-    DPH_with_single_vector(size_t initialElementAmount, size_t initialBucketAmount) : hashtable<Key, T>(), bucketInfos(initialBucketAmount) {
+    DPH_with_single_vector(size_t initialElementAmount) : hashtable<Key, T>(), bucketInfos(initialBucketAmount) {
 		c = 1;
 		M = calculateM(initialElementAmount);
 		_elementAmount = 0;
-		bucketAmount = initialBucketAmount;
+		bucketAmount = calculateBucketAmount(initialElementAmount);
 
 		size_t prime = primes(initialElementAmount);
 		size_t random = randoms(1, prime - 1);
@@ -81,7 +82,7 @@ public:
 
 		size_t initialElementPerBucketAmount = initialElementAmount / initialBucketAmount;
 		size_t bucketM = std::max(size_t(10), initialElementPerBucketAmount);
-		size_t bucketLength = 2 * bucketM * (bucketM - 1);
+		size_t bucketLength = calculateBucketLength(bucketM);
 		size_t bucketPrime = primes(bucketLength);
 		for(size_t i = 0; i < bucketAmount; i++) {
 			size_t bucketStart = i == 0 ? 0 : i * bucketLength;
@@ -102,14 +103,27 @@ public:
 		if (!entry.isInitialized()) {
 			entry.initialize(key);
 			_elementAmount++;
-			M++;
+			count++;
 			bucket.b++;
 		} else if (entry.isDeleted()) {
 			entry = bucket_entry<Key, T>();
 			entry.initialize(key);
 			_elementAmount++;
-			M++;
+			count++;
 			bucket.b++;
+		}
+		if (count >= M) {
+			rehashAll(key);
+		} else if (bucket.b <= bucket.M and entry.getKey() != key) {
+			// Rehash bucket
+		} else if (bucket.b > bucket.M) {
+			size_t newBucketM = bucket.M * 2;
+			size_t newBucketLength = calculateBucketLength(newBucketM);
+			if (globalConditionIsSatisfied(newBucketLength)) {
+				// Resize and rehash bucket
+			} else {
+				rehashAll();
+			}
 		}
 		// If this is not the case something with the dynamic rehashing didn't work out
 		assert(entry.getKey() == key);
@@ -146,9 +160,12 @@ public:
 			assert(entry.getKey() == key);
 			entry.markDeleted();
 			_elementAmount--;
-			M++;
+			count++;
 			bucket.b++;
 			return 1;
+		}
+		if (count >= M) {
+			rehashAll();
 		}
 		return 0;
     }
@@ -166,6 +183,35 @@ public:
 private:
 	size_t calculateM(size_t elementAmount) {
 		return (1 + c) * elementAmount;
+	}
+
+	size_t calculateBucketAmount(size_t elementAmount) {
+		return 10;
+	}
+
+	size_t calculateBucketLength(size_t bucketM) {
+		return 2 * bucketM * (bucketM - 1);
+	}
+
+	bool globalConditionIsSatisfied(size_t bucketLengthOfBucketToResize,
+	                        		size_t bucketIndexOfBucketToResize) {
+		size_t lengthSum = 0;
+		for (int i = 0; i < bucketAmount; i++) {
+			if (i == bucketIndexOfBucketToResize) {
+				lengthSum += bucketLengthOfBucketToResize;
+			} else {
+				lengthSum += buckets[i].length;
+			}
+		}
+		return lengthSum <= ((32 * M * M) / bucketAmount) + 4 * M;
+	}
+
+	void rehashAll(const Key &key) {
+
+	}
+
+	void rehashAll() {
+
 	}
 };
 
