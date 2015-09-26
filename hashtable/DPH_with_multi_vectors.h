@@ -68,7 +68,7 @@ class inner_table_entry{
 public:
 	inner_table_entry(Key& elementKey, T& elementValue) : key(elementKey), t(elementValue) {
 	}
-	inner_table_entry() : key(0), t(0) {}
+	inner_table_entry() : key(), t() {}
 	void initialize(Key theKey) {
 		key = theKey;
 		initialized = true;
@@ -154,14 +154,14 @@ template <typename Key,
           typename T,
 	      typename PreHashFcn = std::hash<Key>,
 		  typename OuterHashFcn = outer_universal_hash_fcn>
-class fred_hash_map : public hashtable<Key, T> {
+class DPH_with_multi_vectors : public hashtable<Key, T> {
 public:
-    fred_hash_map(size_t initialM, size_t numberOfSubBlocks) : hashtable<Key, T>(), outerHashFcn(initialM, numberOfSubBlocks), outerTable(numberOfSubBlocks) {
+    DPH_with_multi_vectors(size_t initialM, size_t numberOfSubBlocks) : hashtable<Key, T>(), outerHashFcn(initialM, numberOfSubBlocks), outerTable(numberOfSubBlocks) {
 		M = initialM;
 		iniM = initialM;
 		s = numberOfSubBlocks;
     }
-    virtual ~fred_hash_map() = default;
+    virtual ~DPH_with_multi_vectors() = default;
 
     // Register all contenders in the list
     static void register_contenders(common::contender_list<hashtable<Key, T>> &list) {
@@ -170,7 +170,7 @@ public:
             [](){ 
 				size_t initialM = 10;
 				size_t s = 100;
-				fred_hash_map<Key, T>* fredMap= new fred_hash_map<Key, T>(initialM, s);
+				DPH_with_multi_vectors<Key, T>* fredMap= new DPH_with_multi_vectors<Key, T>(initialM, s);
 				return fredMap; 
 			}
         ));
