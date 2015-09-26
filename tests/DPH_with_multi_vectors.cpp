@@ -1,8 +1,8 @@
 #include "catch.hpp"
 #include "hashtable/DPH_with_multi_vectors.h"
 
-SCENARIO("fred_hash_map's basic functions work", "[hashtable]") {
-	GIVEN("A fred_hash_map") {
+SCENARIO("DPH_with_multi_vectors's basic functions work", "[hashtable]") {
+	GIVEN("A DPH_with_multi_vectors") {
 		hashtable::DPH_with_multi_vectors<unsigned int, unsigned int> m(100, 10);
 		const size_t n = 96;
 		for (size_t i = 0; i < n; ++i) {
@@ -76,8 +76,8 @@ SCENARIO("fred_hash_map's basic functions work", "[hashtable]") {
 	}
 }
 
-SCENARIO("fred_hash_map with string keys or values", "[hashtable]") {
-	GIVEN("a fred_hash_map with string keys and int values") {
+SCENARIO("DPH_with_multi_vectors with string keys or values", "[hashtable]") {
+	GIVEN("a DPH_with_multi_vectors with string keys and int values") {
 		hashtable::DPH_with_multi_vectors<std::string, int> m(100, 10);
 		WHEN("We insert keys") {
 			m["foo"] = 1;
