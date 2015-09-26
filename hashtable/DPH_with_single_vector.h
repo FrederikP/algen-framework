@@ -119,7 +119,7 @@ public:
 		} else if (bucket.b > bucket.M) {
 			size_t newBucketM = bucket.M * 2;
 			size_t newBucketLength = calculateBucketLength(newBucketM);
-			if (globalConditionIsSatisfied(newBucketLength)) {
+			if (globalConditionIsSatisfied(newBucketLength, bucketIndex)) {
 				// Resize and rehash bucket
 			} else {
 				rehashAll();
@@ -196,7 +196,7 @@ private:
 	bool globalConditionIsSatisfied(size_t bucketLengthOfBucketToResize,
 	                        		size_t bucketIndexOfBucketToResize) {
 		size_t lengthSum = 0;
-		for (int i = 0; i < bucketAmount; i++) {
+		for (size_t i = 0; i < bucketAmount; i++) {
 			if (i == bucketIndexOfBucketToResize) {
 				lengthSum += bucketLengthOfBucketToResize;
 			} else {
