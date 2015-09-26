@@ -71,9 +71,9 @@ int main(int argc, char** argv) {
     //hashtable::dense_hash_map<int, int>::register_contenders(contenders);
     //hashtable::sparse_hash_map<int, int>::register_contenders(contenders);
 
-	hashtable::DPH_with_multi_vectors<int, int>::register_contenders(contenders);
+	//hashtable::DPH_with_multi_vectors<int, int>::register_contenders(contenders);
 	hashtable::DPH_with_single_vector<int, int>::register_contenders(contenders);
-	hashtable::DPH_with_array_buckets<int, int>::register_contenders(contenders);
+	//hashtable::DPH_with_array_buckets<int, int>::register_contenders(contenders);
 
     // Register Benchmarks
     common::contender_list<Benchmark> benchmarks;

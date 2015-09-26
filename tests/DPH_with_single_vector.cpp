@@ -3,7 +3,7 @@
 
 SCENARIO("DPH_with_single_vector basic functions work", "[hashtable]") {
 	GIVEN("A DPH_with_single_vector") {
-		hashtable::DPH_with_single_vector<unsigned int, unsigned int> m(100, 10);
+		hashtable::DPH_with_single_vector<unsigned int, unsigned int> m(100);
 		const size_t n = 96;
 		for (size_t i = 0; i < n; ++i) {
 			m[i] = i*i;
@@ -78,7 +78,7 @@ SCENARIO("DPH_with_single_vector basic functions work", "[hashtable]") {
 
 SCENARIO("DPH_with_single_vector with string keys or values", "[hashtable]") {
 	GIVEN("an DPH_with_single_vector with string keys and int values") {
-		hashtable::DPH_with_single_vector<std::string, int> m(100, 10);
+		hashtable::DPH_with_single_vector<std::string, int> m(100);
 		WHEN("We insert keys") {
 			m["foo"] = 1;
 			m["bar"] = 2;
@@ -107,7 +107,7 @@ SCENARIO("DPH_with_single_vector with string keys or values", "[hashtable]") {
 	}
 
 	GIVEN("an DPH_with_single_vector with string keys and values") {
-		hashtable::DPH_with_single_vector<std::string, std::string> m(100, 10);
+		hashtable::DPH_with_single_vector<std::string, std::string> m(100);
 		WHEN("We insert keys") {
 			m["foo"] = "oof";
 			m["bar"] = "baz";
@@ -136,7 +136,7 @@ SCENARIO("DPH_with_single_vector with string keys or values", "[hashtable]") {
 
 SCENARIO("DPH_with_single_vector 0/bucket size hashing failure", "[hashtable]") {
 	GIVEN("A DPH_with_single_vector") {
-		hashtable::DPH_with_single_vector<int, std::string> m(97, 10);
+		hashtable::DPH_with_single_vector<int, std::string> m(97);
 		m[0] = "Null";
 		m[3] = "Drei";
 		m[55] = "Fünfundfünfzig";
