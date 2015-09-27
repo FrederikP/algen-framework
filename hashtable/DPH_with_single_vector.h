@@ -275,6 +275,8 @@ private:
 			bucket_entry<Key, T> entry = bucket_entry<Key, T>();
 			entry.initialize(key);
 			bucketEntries[j] = entry;
+		} else {
+			bucketEntries.pop_back();
 		}
 
 		// Choose a new injective hash function randomly
