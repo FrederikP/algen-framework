@@ -127,9 +127,28 @@ public:
 		} else if (bucket.b > bucket.M) {
 			size_t newBucketM = bucket.M * 2;
 			size_t newBucketLength = calculateBucketLength(newBucketM);
+			size_t lengthAddition = newBucketLength - bucket.length;
 			if (globalConditionIsSatisfied(newBucketLength, bucketIndex)) {
-				// Resize and rehash bucket
-				std::cout << "I wanna resize and rehash!\n";
+				// Create new main vector
+				size_t newVectorLength = entries.size() + lengthAddition;
+				std::vector< bucket_entry< Key, T > > newEntriesVector = std::vector< bucket_entry< Key, T > >(newVectorLength);
+				std::copy(entries.begin(),
+						entries.begin() + bucket.start + bucket.length,
+						newEntriesVector.begin());
+				std::copy(
+						entries.begin() + bucket.start
+								+ bucket.length + 1, entries.end(),
+						newEntriesVector.begin() + bucket.start
+								+ newBucketLength + 1);
+
+				for (size_t i = bucketIndex + 1; i < bucketInfos.size(); i++) {
+					bucket_info& info = bucketInfos[i];
+					info.start = info.start + lengthAddition;
+				}
+				bucket.length = newBucketLength;
+				bucket.M = newBucketM;
+				entries = newEntriesVector;
+				rehashBucket(bucket, key);
 			} else {
 				rehashAll();
 			}
@@ -235,22 +254,28 @@ private:
 	}
 
 	void rehashBucket(bucket_info& bucket, const Key& key) {
-		std::cout << "Rehash da bucket!\n";
+		//std::cout << "Rehash da bucket!\n";
 
 		// Collecting entries of the bucket
 		std::vector<bucket_entry<Key, T>> bucketEntries = std::vector<bucket_entry<Key, T>>(bucket.elementAmount + 1);
 		size_t j = 0;
+		bool includesNewKey = false;
 		for (size_t i = bucket.start; i < bucket.start + bucket.length; i++) {
 			bucket_entry<Key, T> entry = entries[i];
 			if (entry.isInitialized() && !entry.isDeleted()) {
+				if (entry.getKey() == key) {
+					includesNewKey = true;
+				}
 				bucketEntries[j] = entry;
 				j++;
 			}
 			entries[i] = bucket_entry<Key, T>();
 		}
-		bucket_entry<Key, T> entry = bucket_entry<Key, T>();
-		entry.initialize(key);
-		bucketEntries[j] = entry;
+		if (!includesNewKey) {
+			bucket_entry<Key, T> entry = bucket_entry<Key, T>();
+			entry.initialize(key);
+			bucketEntries[j] = entry;
+		}
 
 		// Choose a new injective hash function randomly
 		bool isInjective;
@@ -331,7 +356,7 @@ private:
 	}
 
 	void rehashAll(std::vector<bucket_entry<Key, T>> bucketEntries) {
-		std::cout << "I trya rehorst everything!\n";
+		//std::cout << "I trya rehorst everything!\n";
 
 		count = bucketEntries.size();
 		M = calculateM(count);
