@@ -27,7 +27,10 @@ public:
 	size_t operator()(size_t& x) const {
 		assert(_random >= size_t(1) and _random <= (_prime - 1));
 		assert(_prime >= _size);
-		return (_random * x % _prime) % _size;
+		size_t product = _random * x;
+		size_t primed = product % _prime;
+		size_t sized = primed % _size;
+		return sized;
 	}
 };
 
