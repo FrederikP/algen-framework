@@ -117,10 +117,13 @@ public:
 			bucket.b++;
 			bucket.elementAmount++;
 		}
+		bool wasRehashed = false;
 		if (count >= M) {
 			rehashAll(key);
+			wasRehashed = true;
 		} else if (bucket.b <= bucket.M and entry.getKey() != key) {
 			rehashBucket(bucket, key);
+			wasRehashed= true;
 		} else if (bucket.b > bucket.M) {
 			size_t newBucketM = bucket.M * 2;
 			size_t newBucketLength = calculateBucketLength(newBucketM);
@@ -130,6 +133,16 @@ public:
 			} else {
 				rehashAll();
 			}
+			wasRehashed = true;
+		}
+		if (wasRehashed) {
+			bucketIndex = bucketHashFunction(preHash);
+			bucket = bucketInfos[bucketIndex];
+			elementIndex = bucket.index(preHash);
+			bucket_entry<Key, T>& newEntry = entries[elementIndex];
+			// If this is not the case something with the dynamic rehashing didn't work out
+			assert(newEntry.getKey() == key);
+			return newEntry.getValue();
 		}
 		// If this is not the case something with the dynamic rehashing didn't work out
 		assert(entry.getKey() == key);
@@ -274,8 +287,18 @@ private:
 	}
 
 	void rehashAll(const Key &key) {
+		bool hadCollision = false;
+		size_t preHash = preHashFunction(key);
+		size_t bucketIndex = bucketHashFunction(preHash);
+		bucket_info& bucket = bucketInfos[bucketIndex];
+		size_t elementIndex = bucket.index(preHash);
+		bucket_entry<Key, T>& existingEntry = entries[elementIndex];
+		if (existingEntry.getKey() != key) {
+			hadCollision = true;
+		}
+
 		// Collecting entries of the bucket
-		std::vector<bucket_entry<Key, T>> bucketEntries = std::vector<bucket_entry<Key, T>>(_elementAmount + 1);
+		std::vector<bucket_entry<Key, T>> bucketEntries = std::vector<bucket_entry<Key, T>>(hadCollision ? _elementAmount + 1 : _elementAmount);
 		size_t j = 0;
 		for (size_t i = 0; i < entries.size(); i++) {
 			bucket_entry<Key, T> entry = entries[i];
@@ -284,9 +307,12 @@ private:
 				j++;
 			}
 		}
-		bucket_entry<Key, T> entry = bucket_entry<Key, T>();
-		entry.initialize(key);
-		bucketEntries[j] = entry;
+		if (hadCollision) {
+			//there was a collision. append current inserted element
+			bucket_entry<Key, T> entry = bucket_entry<Key, T>();
+			entry.initialize(key);
+			bucketEntries[j] = entry;
+		}
 		rehashAll(bucketEntries);
 	}
 
