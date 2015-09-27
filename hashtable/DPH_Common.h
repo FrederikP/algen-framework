@@ -11,16 +11,18 @@ namespace hashtable {
 class hash_function {
 private:
 	size_t _random;
+	size_t _random2;
 	size_t _prime;
 	size_t _size;
 	
 public:
-	hash_function() : hash_function(0, 0, 0) { }
-	hash_function(size_t random, size_t prime, size_t size) {
-		setParameters(random, prime, size);
+	hash_function() : hash_function(0, 0, 0, 0) { }
+	hash_function(size_t random, size_t random2, size_t prime, size_t size) {
+		setParameters(random, random2, prime, size);
 	}
-	void setParameters(size_t random, size_t prime, size_t size) {
+	void setParameters(size_t random, size_t random2, size_t prime, size_t size) {
 		_random = random;
+		_random2 = random2;
 		_prime = prime;
 		_size = size;
 	}
@@ -28,7 +30,8 @@ public:
 		assert(_random >= size_t(1) and _random <= (_prime - 1));
 		assert(_prime >= _size);
 		size_t product = _random * x;
-		size_t primed = product % _prime;
+		size_t sum = product + _random2;
+		size_t primed = sum % _prime;
 		size_t sized = primed % _size;
 		return sized;
 	}
