@@ -157,3 +157,18 @@ SCENARIO("DPH_with_single_vector 0/bucket size hashing failure", "[hashtable]") 
 		}
 	}
 }
+
+SCENARIO("DPH_with_single_vector rehash counting", "[hashtable]") {
+	GIVEN("A DPH_with_single_vector multiple times") {
+		size_t hashtableAmount = 10;
+		size_t hashtableSize = 100;
+		size_t elementAmount = hashtableSize * 10;
+		for (size_t h = 0; h < hashtableAmount; h++) {
+			hashtable::DPH_with_single_vector<int, int> m(hashtableSize);
+			for (size_t i = 0; i < elementAmount; ++i) {
+				m[i] = i*i;
+			}
+			m.getRehashCounter().print();
+		}
+	}
+}

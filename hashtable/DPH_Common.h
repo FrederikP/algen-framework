@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <iostream>
 
 #include <primesieve.hpp>
 
@@ -141,6 +142,47 @@ public:
 
 	void markDeleted() {
 		deleteFlag = true;
+	}
+};
+
+class rehash_counters {
+public:
+	int resizeAndRehashBucketCounter;
+	int rehashBucketCounter;
+	int rehashBucketNewFunctionCounter;
+	int rehashAllCounter;
+	int rehashAllNewFunctionCounter;
+	int rehashAllNewBucketFunctionCounter;
+
+	rehash_counters() {
+		resizeAndRehashBucketCounter = 0;
+		rehashBucketCounter = 0;
+		rehashBucketNewFunctionCounter = 0;
+		rehashAllCounter = 0;
+		rehashAllNewFunctionCounter = 0;
+		rehashAllNewBucketFunctionCounter = 0;
+	}
+
+	double rehashBucketNewFunctionRatio() {
+		return rehashBucketCounter / (double) rehashBucketNewFunctionCounter;
+	}
+
+	double rehashAllNewFunctionRatio() {
+		return rehashAllCounter / (double) rehashAllNewFunctionCounter;
+	}
+
+	double rehashAllNewBucketFunctionRatio() {
+		return rehashAllCounter / (double) rehashAllNewBucketFunctionCounter;
+	}
+
+	void print() {
+		std::cout << "Resize and Rehash Bucket: " << resizeAndRehashBucketCounter << std::endl;
+		std::cout << "Rehash Bucket: " << rehashBucketCounter << std::endl;
+		std::cout << "Rehash Bucket New Function Ratio: " << rehashBucketNewFunctionRatio() << std::endl;
+		std::cout << "Rehash All: " << rehashAllCounter << std::endl;
+		std::cout << "Rehash All New Function Ratio: " << rehashAllNewFunctionRatio() << std::endl;
+		std::cout << "Rehash All New Bucket Function Ratio: " << rehashAllNewBucketFunctionRatio() << std::endl;
+		std::cout << std::endl;
 	}
 };
 

@@ -20,7 +20,7 @@ public:
 	size_t elementAmount;
 	hash_function hashFunction;
 
-	bucket_info() { }
+	bucket_info() : bucket_info(0, 0, 0, 0, 0, 0) { }
 
 	bucket_info(size_t bucketM, size_t bucketStart, size_t bucketLength, size_t random,  size_t random2, size_t prime) {
 		M = bucketM;
@@ -42,6 +42,8 @@ template <typename Key, typename T,
 		  typename PreHashFcn = std::hash<Key>>
 class DPH_with_single_vector : public hashtable<Key, T> { // DPH = Dynamic Perfect Hashing
 private:
+	rehash_counters rehashCounters;
+
 	size_t c;
 	size_t M;
 	size_t count;
@@ -134,6 +136,7 @@ public:
 			size_t lengthAddition = newBucketLength - bucket.length;
 			if (globalConditionIsSatisfied(newBucketLength, bucketIndex)) {
 				std::cout << "Resizing bucket bucket.b > bucket.M: " << bucket.b << ">"<< bucket.M << "\n";
+				rehashCounters.resizeAndRehashBucketCounter++;
 				// Create new main vector
 				size_t newVectorLength = entries.size() + lengthAddition;
 				std::vector< bucket_entry< Key, T > > newEntriesVector = std::vector< bucket_entry< Key, T > >(newVectorLength);
@@ -225,6 +228,10 @@ public:
 		_elementAmount = 0;
 	}
 
+    rehash_counters& getRehashCounter() {
+    	return rehashCounters;
+    }
+
 private:
 	size_t calculateM(size_t elementAmount) {
 		return (1 + c) * std::max(elementAmount, size_t(4));
@@ -260,8 +267,7 @@ private:
 	}
 
 	void rehashBucket(bucket_info& bucket, const Key& key) {
-		//std::cout << "Rehash da bucket!\n";
-
+		rehashCounters.rehashBucketCounter++;
 		// Collecting entries of the bucket
 		std::vector<bucket_entry<Key, T>> bucketEntries = std::vector<bucket_entry<Key, T>>(bucket.elementAmount + 1);
 		size_t j = 0;
@@ -288,6 +294,8 @@ private:
 		// Choose a new injective hash function randomly
 		bool isInjective;
 		do {
+			rehashCounters.rehashBucketNewFunctionCounter++;
+
 			isInjective = true;
 			size_t prime = primes(bucket.length);
 			size_t random = randoms(1, prime - 1);
@@ -367,7 +375,7 @@ private:
 	}
 
 	void rehashAll(std::vector<bucket_entry<Key, T>> bucketEntries) {
-		//std::cout << "I trya rehorst everything!\n";
+		rehashCounters.rehashAllCounter++;
 
 		count = bucketEntries.size();
 		M = calculateM(count);
@@ -376,6 +384,8 @@ private:
 		size_t lengthSum;
 		std::vector<std::vector<bucket_entry<Key, T>>> bucketedEntries;
 		do {
+			rehashCounters.rehashAllNewFunctionCounter++;
+
 			lengthSum = 0;
 			size_t prime = primes(count);
 			size_t random = randoms(1, prime - 1);
@@ -414,6 +424,8 @@ private:
 			// Choose a new injective hash function randomly
 			bool isInjective;
 			do {
+				rehashCounters.rehashAllNewBucketFunctionCounter++;
+
 				isInjective = true;
 				size_t prime = primes(bucket.length);
 				size_t random = randoms(1, prime - 1);
