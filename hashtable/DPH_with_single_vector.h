@@ -165,8 +165,8 @@ public:
 		}
 		if (wasRehashed) {
 			bucketIndex = bucketHashFunction(preHash);
-			bucket = bucketInfos[bucketIndex];
-			elementIndex = bucket.index(preHash);
+			bucket_info& rehashedBucket = bucketInfos[bucketIndex];
+			elementIndex = rehashedBucket.index(preHash);
 			bucket_entry<Key, T>& newEntry = entries[elementIndex];
 			// If this is not the case something with the dynamic rehashing didn't work out
 			assert(newEntry.getKey() == key);

@@ -91,7 +91,6 @@ public:
 	size_t operator()(size_t from, size_t to) {
 		// Seed with a real random value, if available
 		std::random_device device;
-		// Choose a random factor between 1 and prime - 1
 		std::default_random_engine engine(device());
 		std::uniform_int_distribution<size_t> uniform_dist(from, to);
 		return uniform_dist(engine);
