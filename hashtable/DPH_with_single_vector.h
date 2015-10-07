@@ -432,7 +432,8 @@ private:
 			}
 		} while (!globalConditionIsSatisfied());
 
-		entries = std::vector< bucket_entry< Key, T > >(lengthSum);
+		entries.clear();
+		entries.resize(lengthSum);
 
 		//Updating the buckets
 		for (size_t bucketIndex = 0; bucketIndex < bucketAmount; ++bucketIndex) {
