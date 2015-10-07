@@ -77,7 +77,11 @@ public:
     DPH_with_single_vector(size_t initialElementAmount) :
     	hashtable<Key, T>(),
 		M(calculateM(initialElementAmount)),
+		count(0),
 		bucketAmount(calculateBucketAmount(initialElementAmount)),
+		_elementAmount(0),
+		primes(),
+		randoms(),
     	bucketInfos(bucketAmount)
 	{
 		size_t prime = primes(initialElementAmount);
@@ -388,18 +392,33 @@ private:
 			size_t random2 = randoms(1, prime - 1);
 			bucketHashFunction.setParameters(random, random2, prime, bucketAmount);
 
-			bucketedEntries = std::vector<std::vector<bucket_entry<Key, T>>>(bucketAmount);
+			//Initializing helper vectors
+			bucketedEntries.clear();
+			bucketedEntries.resize(bucketAmount, std::vector<bucket_entry<Key, T>>(elements.size() / bucketAmount));
+			std::vector<size_t> bucketIndices(bucketAmount);
+
+			//Collecting elements for the buckets with new bucket hash Function
 			for (size_t i = 0; i < elements.size(); ++i) {
 				bucket_entry<Key, T>& entry = elements[i];
 				size_t preHash = preHashFunction(entry.getKey());
 				size_t bucketIndex = bucketHashFunction(preHash);
-				bucketedEntries[bucketIndex].push_back(entry);
+				std::vector<bucket_entry<Key, T>>& entriesForBucket = bucketedEntries[bucketIndex];
+				size_t& elementIndex = bucketIndices[bucketIndex];
+				if (elementIndex < entriesForBucket.size()) {
+					entriesForBucket[elementIndex] = entry;
+					++elementIndex;
+				} else {
+					entriesForBucket.push_back(entry);
+					++elementIndex;
+				}
 			}
 
+			//Updating the bucket infos
 			bucketInfos.clear();
 			bucketInfos.resize(bucketAmount);
-			for (size_t i = 0; i < bucketInfos.size(); ++i) {
+			for (size_t i = 0; i < bucketAmount; ++i) {
 				bucket_info& bucket = bucketInfos[i];
+				bucketedEntries[i].resize(bucketIndices[i]);
 				bucket.elementAmount = bucketedEntries[i].size();
 				if (i == 0) {
 					bucket.start = 0;
@@ -415,7 +434,8 @@ private:
 
 		entries = std::vector< bucket_entry< Key, T > >(lengthSum);
 
-		for (size_t bucketIndex = 0; bucketIndex < bucketInfos.size(); ++bucketIndex) {
+		//Updating the buckets
+		for (size_t bucketIndex = 0; bucketIndex < bucketAmount; ++bucketIndex) {
 			bucket_info& bucket = bucketInfos[bucketIndex];
 			std::vector<bucket_entry<Key, T>>& entriesForBucket = bucketedEntries[bucketIndex];
 			// Choose a new injective hash function randomly
