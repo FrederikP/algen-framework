@@ -90,7 +90,7 @@ public:
 		size_t bucketM = std::max(size_t(10), initialElementPerBucketAmount);
 		size_t bucketLength = calculateBucketLength(bucketM);
 		size_t bucketPrime = primes(bucketLength);
-		for(size_t i = 0; i < bucketAmount; i++) {
+		for(size_t i = 0; i < bucketAmount; ++i) {
 			size_t bucketStart = i == 0 ? 0 : i * bucketLength;
 			size_t random = randoms(1, bucketPrime - 1);
 			size_t random2 = randoms(1, bucketPrime - 1);
@@ -109,17 +109,17 @@ public:
 		bucket_entry<Key, T>& entry = entries[elementIndex];
 		if (!entry.isInitialized()) {
 			entry.initialize(key);
-			_elementAmount++;
-			count++;
-			bucket.b++;
-			bucket.elementAmount++;
+			++_elementAmount;
+			++count;
+			++bucket.b;
+			++bucket.elementAmount;
 		} else if (entry.isDeleted()) {
 			entry = bucket_entry<Key, T>();
 			entry.initialize(key);
-			_elementAmount++;
-			count++;
-			bucket.b++;
-			bucket.elementAmount++;
+			++_elementAmount;
+			++count;
+			++bucket.b;
+			++bucket.elementAmount;
 		}
 		bool wasRehashed = false;
 		if (count >= M) {
@@ -136,26 +136,27 @@ public:
 			size_t lengthAddition = newBucketLength - bucket.length;
 			if (globalConditionIsSatisfied(newBucketLength, bucketIndex)) {
 				std::cout << "Resizing bucket bucket.b > bucket.M: " << bucket.b << ">"<< bucket.M << "\n";
-				rehashCounters.resizeAndRehashBucketCounter++;
+				++rehashCounters.resizeAndRehashBucketCounter;
+
 				// Create new main vector
 				size_t newVectorLength = entries.size() + lengthAddition;
 				std::vector< bucket_entry< Key, T > > newEntriesVector = std::vector< bucket_entry< Key, T > >(newVectorLength);
 				std::copy(entries.begin(),
-						entries.begin() + bucket.start + bucket.length,
-						newEntriesVector.begin());
-				std::copy(
-						entries.begin() + bucket.start
-								+ bucket.length + 1, entries.end(),
-						newEntriesVector.begin() + bucket.start
-								+ newBucketLength + 1);
+						  entries.begin() + bucket.start + bucket.length,
+						  newEntriesVector.begin());
+				std::copy(entries.begin() + bucket.start + bucket.length + 1,
+						  entries.end(),
+						  newEntriesVector.begin() + bucket.start + newBucketLength + 1);
+				entries = newEntriesVector;
 
-				for (size_t i = bucketIndex + 1; i < bucketInfos.size(); i++) {
+				// Updating the bucket infos
+				for (size_t i = bucketIndex + 1; i < bucketInfos.size(); ++i) {
 					bucket_info& info = bucketInfos[i];
 					info.start = info.start + lengthAddition;
 				}
 				bucket.length = newBucketLength;
 				bucket.M = newBucketM;
-				entries = newEntriesVector;
+
 				rehashBucket(bucket, key);
 			} else {
 				std::cout << "Rehash all instead of bucket resize\n";
@@ -206,10 +207,10 @@ public:
 			// If this is not the case something with the dynamic rehashing didn't work out
 			assert(entry.getKey() == key);
 			entry.markDeleted();
-			_elementAmount--;
-			count++;
-			bucket.b++;
-			bucket.elementAmount--;
+			--_elementAmount;
+			++count;
+			++bucket.b;
+			--bucket.elementAmount;
 			return 1;
 		}
 		if (count >= M) {
@@ -248,7 +249,7 @@ private:
 	bool globalConditionIsSatisfied(size_t bucketLengthOfBucketToResize,
 	                        		size_t bucketIndexOfBucketToResize) {
 		size_t lengthSum = 0;
-		for (size_t i = 0; i < bucketAmount; i++) {
+		for (size_t i = 0; i < bucketAmount; ++i) {
 			if (i == bucketIndexOfBucketToResize) {
 				lengthSum += bucketLengthOfBucketToResize;
 			} else {
@@ -260,26 +261,26 @@ private:
 
 	bool globalConditionIsSatisfied() {
 		size_t lengthSum = 0;
-		for (size_t i = 0; i < bucketAmount; i++) {
+		for (size_t i = 0; i < bucketAmount; ++i) {
 			lengthSum += bucketInfos[i].length;
 		}
 		return lengthSum <= ((32 * M * M) / bucketAmount) + 4 * M;
 	}
 
 	void rehashBucket(bucket_info& bucket, const Key& key) {
-		rehashCounters.rehashBucketCounter++;
+		++rehashCounters.rehashBucketCounter;
 		// Collecting entries of the bucket
-		std::vector<bucket_entry<Key, T>> bucketEntries = std::vector<bucket_entry<Key, T>>(bucket.elementAmount + 1);
+		std::vector<bucket_entry<Key, T>> bucketEntries(bucket.elementAmount + 1);
 		size_t j = 0;
 		bool includesNewKey = false;
-		for (size_t i = bucket.start; i < bucket.start + bucket.length; i++) {
-			bucket_entry<Key, T> entry = entries[i];
+		for (size_t i = bucket.start; i < bucket.start + bucket.length; ++i) {
+			bucket_entry<Key, T>& entry = entries[i];
 			if (entry.isInitialized() && !entry.isDeleted()) {
 				if (entry.getKey() == key) {
 					includesNewKey = true;
 				}
 				bucketEntries[j] = entry;
-				j++;
+				++j;
 			}
 			entries[i] = bucket_entry<Key, T>();
 		}
@@ -294,7 +295,7 @@ private:
 		// Choose a new injective hash function randomly
 		bool isInjective;
 		do {
-			rehashCounters.rehashBucketNewFunctionCounter++;
+			++rehashCounters.rehashBucketNewFunctionCounter;
 
 			isInjective = true;
 			size_t prime = primes(bucket.length);
@@ -307,7 +308,7 @@ private:
 			((void) lastIndex);
 
 			std::vector<size_t> indices = std::vector<size_t>(bucket.length);
-			for(size_t i = 0; i < bucketEntries.size(); i++) {
+			for(size_t i = 0; i < bucketEntries.size(); ++i) {
 				bucket_entry<Key, T>& entry = bucketEntries[i];
 				if (entry.isInitialized()) {
 					size_t preHash = preHashFunction(entry.getKey());
@@ -322,7 +323,7 @@ private:
 			}
 		} while (!isInjective);
 		// Inserting the entries in the table
-		for(size_t i = 0; i < bucketEntries.size(); i++) {
+		for(size_t i = 0; i < bucketEntries.size(); ++i) {
 			bucket_entry<Key, T> entry = bucketEntries[i];
 			size_t preHash = preHashFunction(entry.getKey());
 			size_t index = bucket.index(preHash);
@@ -331,60 +332,56 @@ private:
 	}
 
 	void rehashAll(const Key &key) {
-		bool hadCollision = false;
 		size_t preHash = preHashFunction(key);
 		size_t bucketIndex = bucketHashFunction(preHash);
 		bucket_info& bucket = bucketInfos[bucketIndex];
 		size_t elementIndex = bucket.index(preHash);
-		bucket_entry<Key, T>& existingEntry = entries[elementIndex];
-		if (existingEntry.getKey() != key) {
-			hadCollision = true;
-		}
+		bool hadCollision = entries[elementIndex].getKey() != key;
 
 		// Collecting entries of the bucket
-		std::vector<bucket_entry<Key, T>> bucketEntries = std::vector<bucket_entry<Key, T>>(hadCollision ? _elementAmount + 1 : _elementAmount);
+		std::vector<bucket_entry<Key, T>> elements(hadCollision ? _elementAmount + 1 : _elementAmount);
 		size_t j = 0;
-		for (size_t i = 0; i < entries.size(); i++) {
-			bucket_entry<Key, T> entry = entries[i];
+		for (size_t i = 0; i < entries.size(); ++i) {
+			bucket_entry<Key, T>& entry = entries[i];
 			if (entry.isInitialized() && !entry.isDeleted()) {
-				bucketEntries[j] = entry;
-				j++;
+				elements[j] = entry;
+				++j;
 			}
 		}
 		if (hadCollision) {
 			//there was a collision. append current inserted element
 			bucket_entry<Key, T> entry = bucket_entry<Key, T>();
 			entry.initialize(key);
-			bucketEntries[j] = entry;
+			elements[j] = entry;
 		}
-		rehashAll(bucketEntries);
+		rehashAll(elements);
 	}
 
 	void rehashAll() {
 		// Collecting entries of the bucket
-		std::vector<bucket_entry<Key, T>> bucketEntries = std::vector<bucket_entry<Key, T>>(_elementAmount);
+		std::vector<bucket_entry<Key, T>> elements(_elementAmount);
 		size_t j = 0;
-		for (size_t i = 0; i < entries.size(); i++) {
-			bucket_entry<Key, T> entry = entries[i];
+		for (size_t i = 0; i < entries.size(); ++i) {
+			bucket_entry<Key, T>& entry = entries[i];
 			if (entry.isInitialized() && !entry.isDeleted()) {
-				bucketEntries[j] = entry;
-				j++;
+				elements[j] = entry;
+				++j;
 			}
 		}
-		rehashAll(bucketEntries);
+		rehashAll(elements);
 	}
 
-	void rehashAll(std::vector<bucket_entry<Key, T>> bucketEntries) {
-		rehashCounters.rehashAllCounter++;
+	void rehashAll(std::vector<bucket_entry<Key, T>>& elements) {
+		++rehashCounters.rehashAllCounter;
 
-		count = bucketEntries.size();
+		count = elements.size();
 		M = calculateM(count);
 		bucketAmount = calculateBucketAmount(M);
 
 		size_t lengthSum;
 		std::vector<std::vector<bucket_entry<Key, T>>> bucketedEntries;
 		do {
-			rehashCounters.rehashAllNewFunctionCounter++;
+			++rehashCounters.rehashAllNewFunctionCounter;
 
 			lengthSum = 0;
 			size_t prime = primes(count);
@@ -393,15 +390,15 @@ private:
 			bucketHashFunction.setParameters(random, random2, prime, bucketAmount);
 
 			bucketedEntries = std::vector<std::vector<bucket_entry<Key, T>>>(bucketAmount);
-			for (size_t i = 0; i < bucketEntries.size(); i++) {
-				bucket_entry<Key, T> entry = bucketEntries[i];
+			for (size_t i = 0; i < elements.size(); ++i) {
+				bucket_entry<Key, T>& entry = elements[i];
 				size_t preHash = preHashFunction(entry.getKey());
 				size_t bucketIndex = bucketHashFunction(preHash);
 				bucketedEntries[bucketIndex].push_back(entry);
 			}
 
 			bucketInfos = std::vector<bucket_info>(bucketAmount);
-			for (size_t i = 0; i < bucketInfos.size(); i++) {
+			for (size_t i = 0; i < bucketInfos.size(); ++i) {
 				bucket_info& bucket = bucketInfos[i];
 				bucket.elementAmount = bucketedEntries[i].size();
 				if (i == 0) {
@@ -418,21 +415,21 @@ private:
 
 		entries = std::vector< bucket_entry< Key, T > >(lengthSum);
 
-		for (size_t bucketIndex = 0; bucketIndex < bucketInfos.size(); bucketIndex++) {
+		for (size_t bucketIndex = 0; bucketIndex < bucketInfos.size(); ++bucketIndex) {
 			bucket_info& bucket = bucketInfos[bucketIndex];
 			std::vector<bucket_entry<Key, T>>& entriesForBucket = bucketedEntries[bucketIndex];
 			// Choose a new injective hash function randomly
 			bool isInjective;
 			do {
-				rehashCounters.rehashAllNewBucketFunctionCounter++;
+				++rehashCounters.rehashAllNewBucketFunctionCounter;
 
 				isInjective = true;
 				size_t prime = primes(bucket.length);
 				size_t random = randoms(1, prime - 1);
 				size_t random2 = randoms(1, prime - 1);
 				bucket.hashFunction.setParameters(random, random2, prime, bucket.length);
-				std::vector<size_t> indices = std::vector<size_t>(bucket.length);
-				for(size_t i = 0; i < entriesForBucket.size(); i++) {
+				std::vector<size_t> indices(bucket.length);
+				for(size_t i = 0; i < entriesForBucket.size(); ++i) {
 					bucket_entry<Key, T>& entry = entriesForBucket[i];
 					size_t preHash = preHashFunction(entry.getKey());
 					size_t index = bucket.hashFunction(preHash);
@@ -445,8 +442,8 @@ private:
 				}
 			} while (!isInjective);
 			// Inserting the entries in the table
-			for(size_t i = 0; i < entriesForBucket.size(); i++) {
-				bucket_entry<Key, T> entry = entriesForBucket[i];
+			for(size_t i = 0; i < entriesForBucket.size(); ++i) {
+				bucket_entry<Key, T>& entry = entriesForBucket[i];
 				size_t preHash = preHashFunction(entry.getKey());
 				size_t index = bucket.index(preHash);
 				entries[index] = entry;
