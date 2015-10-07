@@ -73,7 +73,8 @@ public:
         ));
     }
 	
-    DPH_with_single_vector(size_t initialElementAmount) : hashtable<Key, T>() {
+    DPH_with_single_vector(size_t initialElementAmount) : hashtable<Key, T>(),
+    													  bucketInfos(calculateBucketAmount(initialElementAmount)){
 		c = 5;
 		M = calculateM(initialElementAmount);
 		count = 0;
@@ -85,7 +86,6 @@ public:
 		size_t random2 = randoms(1, prime - 1);
 		bucketHashFunction.setParameters(random, random2, prime, bucketAmount);
 
-		bucketInfos = std::vector<bucket_info>(bucketAmount);
 		size_t initialElementPerBucketAmount = initialElementAmount / bucketAmount;
 		size_t bucketM = std::max(size_t(10), initialElementPerBucketAmount);
 		size_t bucketLength = calculateBucketLength(bucketM);
@@ -238,7 +238,7 @@ private:
 		return (1 + c) * std::max(elementAmount, size_t(4));
 	}
 
-	size_t calculateBucketAmount(size_t elementAmount) {
+	static size_t calculateBucketAmount(size_t elementAmount) {
 		return std::max(size_t(10), elementAmount / 1000);
 	}
 
@@ -397,7 +397,8 @@ private:
 				bucketedEntries[bucketIndex].push_back(entry);
 			}
 
-			bucketInfos = std::vector<bucket_info>(bucketAmount);
+			bucketInfos.clear();
+			bucketInfos.resize(bucketAmount);
 			for (size_t i = 0; i < bucketInfos.size(); ++i) {
 				bucket_info& bucket = bucketInfos[i];
 				bucket.elementAmount = bucketedEntries[i].size();
