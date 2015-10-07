@@ -42,9 +42,10 @@ template <typename Key, typename T,
 		  typename PreHashFcn = std::hash<Key>>
 class DPH_with_single_vector : public hashtable<Key, T> { // DPH = Dynamic Perfect Hashing
 private:
+	static const size_t c = 5;
+
 	rehash_counters rehashCounters;
 
-	size_t c;
 	size_t M;
 	size_t count;
 	
@@ -73,14 +74,12 @@ public:
         ));
     }
 	
-    DPH_with_single_vector(size_t initialElementAmount) : hashtable<Key, T>(),
-    													  bucketInfos(calculateBucketAmount(initialElementAmount)){
-		c = 5;
-		M = calculateM(initialElementAmount);
-		count = 0;
-		_elementAmount = 0;
-		bucketAmount = calculateBucketAmount(initialElementAmount);
-
+    DPH_with_single_vector(size_t initialElementAmount) :
+    	hashtable<Key, T>(),
+		M(calculateM(initialElementAmount)),
+		bucketAmount(calculateBucketAmount(initialElementAmount)),
+    	bucketInfos(bucketAmount)
+	{
 		size_t prime = primes(initialElementAmount);
 		size_t random = randoms(1, prime - 1);
 		size_t random2 = randoms(1, prime - 1);
@@ -234,7 +233,7 @@ public:
     }
 
 private:
-	size_t calculateM(size_t elementAmount) {
+	static size_t calculateM(size_t elementAmount) {
 		return (1 + c) * std::max(elementAmount, size_t(4));
 	}
 
