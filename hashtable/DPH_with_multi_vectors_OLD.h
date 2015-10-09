@@ -154,23 +154,23 @@ template <typename Key,
           typename T,
 	      typename PreHashFcn = std::hash<Key>,
 		  typename OuterHashFcn = outer_universal_hash_fcn>
-class DPH_with_multi_vectors : public hashtable<Key, T> {
+class DPH_with_multi_vectors_OLD : public hashtable<Key, T> {
 public:
-    DPH_with_multi_vectors(size_t initialM, size_t numberOfSubBlocks) : hashtable<Key, T>(), outerHashFcn(initialM, numberOfSubBlocks), outerTable(numberOfSubBlocks) {
+	DPH_with_multi_vectors_OLD(size_t initialM, size_t numberOfSubBlocks) : hashtable<Key, T>(), outerHashFcn(initialM, numberOfSubBlocks), outerTable(numberOfSubBlocks) {
 		M = initialM;
 		iniM = initialM;
 		s = numberOfSubBlocks;
     }
-    virtual ~DPH_with_multi_vectors() = default;
+    virtual ~DPH_with_multi_vectors_OLD() = default;
 
     // Register all contenders in the list
     static void register_contenders(common::contender_list<hashtable<Key, T>> &list) {
         using Factory = common::contender_factory<hashtable<Key, T>>;
-        list.register_contender(Factory("fred_hash_map", "fred-hash-map",
+        list.register_contender(Factory("DPH_with_multi_vectors_OLD", "DPH_with_multi_vectors_OLD",
             [](){ 
 				size_t initialM = 10;
 				size_t s = 100;
-				DPH_with_multi_vectors<Key, T>* fredMap= new DPH_with_multi_vectors<Key, T>(initialM, s);
+				DPH_with_multi_vectors_OLD<Key, T>* fredMap= new DPH_with_multi_vectors_OLD<Key, T>(initialM, s);
 				return fredMap; 
 			}
         ));

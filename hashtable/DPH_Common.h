@@ -38,45 +38,6 @@ public:
 	}
 };
 
-class bucket_hash_function {
-private:
-	size_t _random;
-	size_t _prime;
-	size_t _size;
-	
-public:
-	bucket_hash_function() : bucket_hash_function(0, 0, 0) { }
-	bucket_hash_function(size_t random, size_t prime, size_t size) {
-		setParameters(random, prime, size);
-	}
-	void setParameters(size_t random, size_t prime, size_t size) {
-		_random = random;
-		_prime = prime;
-		_size = size;
-	}
-	size_t operator()(size_t& x) const {
-		return (_random * x % _prime) % _size;
-	}
-};
-
-class entry_hash_function {
-private:
-	size_t _random;
-	size_t _prime;
-public:
-	entry_hash_function() : entry_hash_function(0, 0) { }
-	entry_hash_function(size_t random, size_t prime) {
-		setParameters(random, prime);
-	}
-	void setParameters(size_t random, size_t prime) {
-		_random = random;
-		_prime = prime;
-	}
-	size_t operator()(size_t& x) const {
-		return _random * x % _prime;
-	}
-};
-
 class prime_generator {
 public:
 	size_t operator()(size_t greaterEqualsThan) {

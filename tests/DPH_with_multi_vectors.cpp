@@ -1,5 +1,5 @@
+#include "../hashtable/DPH_with_multi_vectors_OLD.h"
 #include "catch.hpp"
-#include "hashtable/DPH_with_multi_vectors.h"
 
 SCENARIO("DPH_with_multi_vectors's basic functions work", "[hashtable]") {
 	GIVEN("A DPH_with_multi_vectors") {
