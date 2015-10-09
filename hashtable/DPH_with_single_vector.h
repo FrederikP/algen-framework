@@ -304,6 +304,7 @@ private:
 		bool isInjective;
 		do {
 			++rehashCounters.rehashBucketNewFunctionCounter;
+			std::cout << "rehashBucket: Creating new entry hash function" << "\n";
 
 			isInjective = true;
 			size_t prime = primes(bucket.length);
@@ -390,6 +391,7 @@ private:
 		std::vector<std::vector<bucket_entry<Key, T>>> bucketedEntries;
 		do {
 			++rehashCounters.rehashAllNewFunctionCounter;
+			std::cout << "rehashAll: Creating new bucket hash function" << "\n";
 
 			lengthSum = 0;
 			size_t prime = primes(count);
@@ -448,6 +450,7 @@ private:
 			bool isInjective;
 			do {
 				++rehashCounters.rehashAllNewBucketFunctionCounter;
+				std::cout << "rehashAll: Creating new entry hash function for bucket " << bucketIndex << "\n";
 
 				isInjective = true;
 				size_t prime = primes(bucket.length);
