@@ -5,6 +5,7 @@
 
 #include "../common/contenders.h"
 #include "hashtable.h"
+#include "DPH_with_single_vector.h" // TODO Delete me
 #include "DPH_Common.h"
 
 using namespace common::monad;
@@ -128,11 +129,9 @@ private:
 
 template <typename Key, typename T,
 		  typename PreHashFcn = std::hash<Key>>
-class DPH_with_multi_vectors : public hashtable<Key, T> { // DPH = Dynamic Perfect Hashing
+class DPH_with_buckets : public hashtable<Key, T> { // DPH = Dynamic Perfect Hashing
 private:
 	static const size_t c = 5;
-
-	rehash_counters rehashCounters;
 
 	size_t M;
 	size_t count;
@@ -149,20 +148,20 @@ private:
 	std::vector< bucket_entry< Key, T > > entries;
 	
 public:
-    virtual ~DPH_with_multi_vectors() = default;
+    virtual ~DPH_with_buckets() = default;
 
     // Register all contenders in the list
     static void register_contenders(common::contender_list<hashtable<Key, T>> &list) {
         using Factory = common::contender_factory<hashtable<Key, T>>;
-        list.register_contender(Factory("DPH_with_multi_vectors", "DPH_with_multi_vectors",
+        list.register_contender(Factory("DPH_with_buckets", "DPH_with_buckets",
             [](){ 
 				size_t initialElementAmount = 1000;
-				return new DPH_with_multi_vectors(initialElementAmount);
+				return new DPH_with_buckets(initialElementAmount);
 			}
         ));
     }
 	
-    DPH_with_multi_vectors(size_t initialElementAmount) :
+    DPH_with_buckets(size_t initialElementAmount) :
     	hashtable<Key, T>(),
 		M(calculateM(initialElementAmount)),
 		count(0),
@@ -227,7 +226,6 @@ public:
 			size_t lengthAddition = newBucketLength - bucket.length;
 			if (globalConditionIsSatisfied(newBucketLength, bucketIndex)) {
 				std::cout << "Resizing bucket bucket.b > bucket.M: " << bucket.b << ">"<< bucket.M << "\n";
-				++rehashCounters.resizeAndRehashBucketCounter;
 
 				size_t newEntriesLength = entries.size() + lengthAddition;
 				if (bucketIndex == bucketAmount - 1) {
@@ -325,10 +323,6 @@ public:
 		_elementAmount = 0;
 	}
 
-    rehash_counters& getRehashCounter() {
-    	return rehashCounters;
-    }
-
 private:
 	static size_t calculateM(size_t elementAmount) {
 		return (1 + c) * std::max(elementAmount, size_t(4));
@@ -364,7 +358,6 @@ private:
 	}
 
 	void rehashBucket(bucket_info& bucket, const Key& key) {
-		++rehashCounters.rehashBucketCounter;
 		// Collecting entries of the bucket
 		std::vector<bucket_entry<Key, T>> bucketEntries(bucket.elementAmount + 1);
 		size_t j = 0;
@@ -391,7 +384,6 @@ private:
 		// Choose a new injective hash function randomly
 		bool isInjective;
 		do {
-			++rehashCounters.rehashBucketNewFunctionCounter;
 			std::cout << "rehashBucket: Creating new entry hash function" << "\n";
 
 			isInjective = true;
@@ -469,8 +461,6 @@ private:
 	}
 
 	void rehashAll(std::vector<bucket_entry<Key, T>>& elements) {
-		++rehashCounters.rehashAllCounter;
-
 		count = elements.size();
 		M = calculateM(count);
 		bucketAmount = calculateBucketAmount(M);
@@ -478,7 +468,6 @@ private:
 		size_t lengthSum;
 		std::vector<std::vector<bucket_entry<Key, T>>> bucketedEntries;
 		do {
-			++rehashCounters.rehashAllNewFunctionCounter;
 			std::cout << "rehashAll: Creating new bucket hash function" << "\n";
 
 			lengthSum = 0;
@@ -537,7 +526,6 @@ private:
 			// Choose a new injective hash function randomly
 			bool isInjective;
 			do {
-				++rehashCounters.rehashAllNewBucketFunctionCounter;
 				std::cout << "rehashAll: Creating new entry hash function for bucket " << bucketIndex << "\n";
 
 				isInjective = true;
