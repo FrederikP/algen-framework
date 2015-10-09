@@ -106,7 +106,7 @@ SCENARIO("DPH_with_multi_vectors with string keys or values", "[hashtable]") {
 		}
 	}
 
-	GIVEN("a fred_hash_map with string keys and values") {
+	GIVEN("a DPH_with_multi_vectors with string keys and values") {
 		hashtable::DPH_with_multi_vectors<std::string, std::string> m(100, 10);
 		WHEN("We insert keys") {
 			m["foo"] = "oof";
@@ -129,6 +129,30 @@ SCENARIO("DPH_with_multi_vectors with string keys or values", "[hashtable]") {
 				CHECK(m.find("foo") == nothing<std::string>());
 			} AND_THEN("The other ones are still there") {
 				CHECK(m.find("bar") == just<std::string>("baz"));
+			}
+		}
+	}
+}
+
+SCENARIO("DPH_with_multi_vectors 0/bucket size hashing failure", "[hashtable]") {
+	GIVEN("A DPH_with_multi_vectors") {
+		hashtable::DPH_with_multi_vectors<int, std::string> m(97);
+		m[0] = "Null";
+		m[3] = "Drei";
+		m[55] = "Fünfundfünfzig";
+
+		WHEN("We ask for the elements") {
+			THEN("Their values are correct") {
+				CHECK(m[0] == "Null");
+				CHECK(m[3] == "Drei");
+				CHECK(m[55] == "Fünfundfünfzig");
+			}
+		}
+		WHEN("We insert an element, that causes a conflict") {
+			m[97] = "Conflict with key 0";
+			THEN("Both values can be found") {
+				CHECK(m[0] == "Null");
+				CHECK(m[97] == "Conflict with key 0");
 			}
 		}
 	}

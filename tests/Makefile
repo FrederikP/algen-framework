@@ -4,11 +4,7 @@ CFLAGS = -std=c++11 -g -Wall -Wextra -Werror -I..
 LDFLAGS = -lprimesieve
 
 # This is where the test files go
-SRC = maybe.cpp \
-      unordered_map.cpp \
-      DPH_with_single_vector.cpp \
-	  DPH_with_array_buckets.cpp \
-	  DPH_with_multi_vectors.cpp
+SRC = DPH_with_multi_vectors.cpp
 
 BUILDDIR ?= build
 
