@@ -18,9 +18,13 @@ private:
 	
 public:
 	hash_function() : hash_function(0, 0, 0, 0) { }
-	hash_function(size_t random, size_t random2, size_t prime, size_t size) {
-		setParameters(random, random2, prime, size);
-	}
+	hash_function(size_t random, size_t random2, size_t prime, size_t size) :
+		_random(random),
+		_random2(random2),
+		_prime(prime),
+		_size(size)
+	{ }
+
 	void setParameters(size_t random, size_t random2, size_t prime, size_t size) {
 		_random = random;
 		_random2 = random2;

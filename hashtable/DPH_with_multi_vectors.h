@@ -11,36 +11,124 @@ using namespace common::monad;
 
 namespace hashtable {
 
-class bucket_info {
+#define _unused(x) ((void)x) // Makro to prevent unused parameter errors
+template <typename Key, typename T,
+		  typename PreHashFcn = std::hash<Key>>
+class bucket {
+private:
+	prime_generator primes;
+	random_generator randoms;
+
+	PreHashFcn preHashFunction;
+	hash_function hashFunction;
+	std::vector<bucket_entry<Key, T>> entries;
+
 public:
 	size_t M;
 	size_t b;
-	size_t start;
 	size_t length;
 	size_t elementAmount;
-	hash_function hashFunction;
 
-	bucket_info() : bucket_info(0, 0, 0, 0, 0, 0) { }
+	bucket() : bucket(0) { }
 
-	bucket_info(size_t bucketM, size_t bucketStart, size_t bucketLength, size_t random,  size_t random2, size_t prime) {
-		M = bucketM;
-		b = 0;
-		start = bucketStart;
-		length = bucketLength;
-		elementAmount = 0;
+	bucket(size_t initialSize) :
+		M(std::max(size_t(10), initialSize)),
+		length(calculateBucketLength(M)),
+		b(0), elementAmount(0),
+		entries(length)
+	{
+		size_t prime = primes(length);
+		size_t random = randoms(1, prime - 1);
+		size_t random2 = randoms(1, prime - 1);
 		hashFunction.setParameters(random, random2, prime, length);
 	}
 
-	size_t index(size_t preHash) const {
-		size_t index = start + hashFunction(preHash);
-		assert(index < start + length);
-		return index;
+	bucket_entry<Key, T>& operator[](size_t preHash) {
+		size_t index = hashFunction(preHash);
+		return entries[index];
+	}
+
+	void resizeAndRehash(const Key& key) {
+		M *= 2;
+		length = calculateBucketLength(M);
+		rehash(key);
+	}
+
+	void rehash(const Key& key) {
+		// TODO Use move semantic instead of copying? For example with std::copy_if
+		// Collecting entries of the bucket
+		std::vector<bucket_entry<Key, T>> bucketEntries(elementAmount + 1);
+		size_t j = 0;
+		bool includesNewKey = false;
+		for (size_t i = 0; i < entries.size(); ++i) {
+			bucket_entry<Key, T>& entry = entries[i];
+			if (entry.isInitialized() && !entry.isDeleted()) {
+				if (entry.getKey() == key) {
+					includesNewKey = true;
+				}
+				bucketEntries[j] = entry;
+				++j;
+			}
+			entries[i] = bucket_entry<Key, T>();
+		}
+		if (!includesNewKey) {
+			bucket_entry<Key, T> entry = bucket_entry<Key, T>();
+			entry.initialize(key);
+			bucketEntries[j] = entry;
+		} else {
+			bucketEntries.pop_back();
+		}
+
+		entries.clear();
+		entries.resize(length);
+
+		// Choose a new injective hash function randomly
+		bool isInjective;
+		do {
+			std::cout << "rehashBucket: Creating new entry hash function" << "\n";
+
+			isInjective = true;
+			size_t prime = primes(length);
+			size_t random = randoms(1, prime - 1);
+			size_t random2 = randoms(1, prime - 1);
+			hashFunction.setParameters(random, random2, prime, length);
+
+			std::vector<size_t> indices = std::vector<size_t>(length);
+			for(size_t i = 0; i < bucketEntries.size(); ++i) {
+				bucket_entry<Key, T>& entry = bucketEntries[i];
+				if (entry.isInitialized()) {
+					size_t preHash = preHashFunction(entry.getKey());
+					size_t index = hashFunction(preHash);
+					if (indices[index] != 0) {
+						isInjective = false;
+						break;
+					} else {
+						indices[index] = 1;
+					}
+				}
+			}
+		} while (!isInjective);
+
+		// TODO Use move semantic instead of copying?
+		// Inserting the entries in the table
+		for(size_t i = 0; i < bucketEntries.size(); ++i) {
+			bucket_entry<Key, T> entry = bucketEntries[i];
+			size_t preHash = preHashFunction(entry.getKey());
+			size_t index = hashFunction(preHash);
+			entries[index] = entry;
+		}
+	}
+
+private:
+
+	static size_t calculateBucketLength(size_t bucketM) {
+		return bucketM * (bucketM - 1);
 	}
 };
 
 template <typename Key, typename T,
 		  typename PreHashFcn = std::hash<Key>>
-class DPH_with_single_vector : public hashtable<Key, T> { // DPH = Dynamic Perfect Hashing
+class DPH_with_multi_vectors : public hashtable<Key, T> { // DPH = Dynamic Perfect Hashing
 private:
 	static const size_t c = 5;
 
@@ -61,20 +149,20 @@ private:
 	std::vector< bucket_entry< Key, T > > entries;
 	
 public:
-    virtual ~DPH_with_single_vector() = default;
+    virtual ~DPH_with_multi_vectors() = default;
 
     // Register all contenders in the list
     static void register_contenders(common::contender_list<hashtable<Key, T>> &list) {
         using Factory = common::contender_factory<hashtable<Key, T>>;
-        list.register_contender(Factory("DPH_with_single_vector", "DPH_with_single_vector",
+        list.register_contender(Factory("DPH_with_multi_vectors", "DPH_with_multi_vectors",
             [](){ 
 				size_t initialElementAmount = 1000;
-				return new DPH_with_single_vector(initialElementAmount); 
+				return new DPH_with_multi_vectors(initialElementAmount);
 			}
         ));
     }
 	
-    DPH_with_single_vector(size_t initialElementAmount) :
+    DPH_with_multi_vectors(size_t initialElementAmount) :
     	hashtable<Key, T>(),
 		M(calculateM(initialElementAmount)),
 		count(0),
@@ -311,6 +399,10 @@ private:
 			size_t random = randoms(1, prime - 1);
 			size_t random2 = randoms(1, prime - 1);
 			bucket.hashFunction.setParameters(random, random2, prime, bucket.length);
+
+			size_t lastPreHash = preHashFunction(key);
+			size_t lastIndex = bucket.hashFunction(lastPreHash);
+			((void) lastIndex);
 
 			std::vector<size_t> indices = std::vector<size_t>(bucket.length);
 			for(size_t i = 0; i < bucketEntries.size(); ++i) {
