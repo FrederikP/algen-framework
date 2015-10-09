@@ -247,7 +247,7 @@ private:
 	}
 
 	static size_t calculateBucketAmount(size_t elementAmount) {
-		return std::max(size_t(10), elementAmount / 1000);
+		return std::max(size_t(10), elementAmount / 1500);
 	}
 
 	size_t calculateBucketLength(size_t bucketM) {
