@@ -141,25 +141,30 @@ public:
 				std::cout << "Resizing bucket bucket.b > bucket.M: " << bucket.b << ">"<< bucket.M << "\n";
 				++rehashCounters.resizeAndRehashBucketCounter;
 
-				// Create new main vector
-				size_t newVectorLength = entries.size() + lengthAddition;
-				std::vector< bucket_entry< Key, T > > newEntriesVector = std::vector< bucket_entry< Key, T > >(newVectorLength);
-				std::copy(entries.begin(),
-						  entries.begin() + bucket.start + bucket.length,
-						  newEntriesVector.begin());
-				std::copy(entries.begin() + bucket.start + bucket.length + 1,
-						  entries.end(),
-						  newEntriesVector.begin() + bucket.start + newBucketLength + 1);
-				entries = newEntriesVector;
+				size_t newEntriesLength = entries.size() + lengthAddition;
+				if (bucketIndex == bucketAmount - 1) {
+					// Special case for the last bucket, because no copying is necessary
+					entries.resize(newEntriesLength);
+					bucket.length = newBucketLength;
+					bucket.M = newBucketM;
+				} else {
+					// Resize the entries vector
+					std::vector<bucket_entry<Key, T>> tmp(std::make_move_iterator(entries.begin() + bucket.start + bucket.length + 1),
+														  std::make_move_iterator(entries.end()));
+					entries.erase(entries.begin() + bucket.start + bucket.length + 1,
+								  entries.end());
+					entries.resize(newEntriesLength);
+					std::copy(std::make_move_iterator(tmp.begin()), std::make_move_iterator(tmp.end()),
+							  entries.begin() + bucket.start + newBucketLength + 1);
 
-				// Updating the bucket infos
-				for (size_t i = bucketIndex + 1; i < bucketInfos.size(); ++i) {
-					bucket_info& info = bucketInfos[i];
-					info.start = info.start + lengthAddition;
+					// Updating the bucket infos
+					for (size_t i = bucketIndex + 1; i < bucketInfos.size(); ++i) {
+						bucket_info& info = bucketInfos[i];
+						info.start = info.start + lengthAddition;
+					}
+					bucket.length = newBucketLength;
+					bucket.M = newBucketM;
 				}
-				bucket.length = newBucketLength;
-				bucket.M = newBucketM;
-
 				rehashBucket(bucket, key);
 			} else {
 				std::cout << "Rehash all instead of bucket resize\n";
