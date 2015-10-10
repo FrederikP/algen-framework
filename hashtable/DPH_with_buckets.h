@@ -102,7 +102,7 @@ public:
 
 	// TODO should be private
 	static size_t calculateBucketLength(size_t bucketM) {
-		return bucketM * (bucketM - 1);
+		return 2 * bucketM * (bucketM - 1);
 	}
 
 private:
@@ -422,7 +422,7 @@ private:
 
 		//Updating the buckets
 		buckets.clear();
-		buckets.reserve(bucketAmount);
+		buckets.resize(bucketAmount);
 		for (size_t i = 0; i < bucketAmount; ++i) {
 			std::vector<bucket_entry<Key, T>>& bucketEntries = bucketedEntries[i];
 			buckets.push_back(bucket<Key, T>(bucketEntries));
