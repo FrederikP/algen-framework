@@ -66,6 +66,10 @@ public:
 		return entries[index].find(key);
     }
 
+    size_t size() const {
+    	return elementAmount;
+    }
+
 	void resizeAndRehash(const Key& key) {
 		M *= 2;
 		length = calculateBucketLength(M);
@@ -90,9 +94,9 @@ public:
 			entries[i] = bucket_entry<Key, T>();
 		}
 		if (!includesNewKey) {
-			bucket_entry<Key, T> entry = bucket_entry<Key, T>();
-			entry.initialize(key);
-			bucketEntries[j] = entry;
+			bucketEntries[j].initialize(key);
+			++elementAmount;
+			++b;
 		} else {
 			bucketEntries.pop_back();
 		}
@@ -104,7 +108,7 @@ public:
 
 	// TODO should be private
 	size_t calculateBucketLength(size_t bucketM) {
-		size_t minLength = 0.2 * bucketM * (bucketM - 1);
+		size_t minLength = 5 * bucketM;
 		return primes(minLength);
 	}
 
@@ -140,7 +144,7 @@ private:
 			if (hashFunctionRecalculationAttempts > maxHashFunctionRecalculationAttempts) {
 				std::cout << "More than " << maxHashFunctionRecalculationAttempts << " attempts to find a new hash function." << "\n";
 
-				length *= 1.1;
+				length *= 2;
 				entries.clear();
 				entries.resize(length);
 				hashFunctionRecalculationAttempts = 0;
@@ -169,7 +173,6 @@ private:
 	size_t count;
 	
 	size_t bucketAmount;
-	size_t _elementAmount;
 
 	prime_generator primes;
 	random_generator randoms;
@@ -196,7 +199,6 @@ public:
 		M(calculateM(initialElementAmount)),
 		count(0),
 		bucketAmount(calculateBucketAmount(initialElementAmount)),
-		_elementAmount(0),
 		primes(),
 		randoms(),
     	buckets(bucketAmount, bucket<Key, T>(initialElementAmount / bucketAmount))
@@ -214,14 +216,12 @@ public:
 		bucket_entry<Key, T>& entry = _bucket[preHash];
 		if (!entry.isInitialized()) {
 			entry.initialize(key);
-			++_elementAmount;
 			++count;
 			++_bucket.b;
 			++_bucket.elementAmount;
 		} else if (entry.isDeleted()) {
 			entry = bucket_entry<Key, T>();
 			entry.initialize(key);
-			++_elementAmount;
 			++count;
 			++_bucket.b;
 			++_bucket.elementAmount;
@@ -282,7 +282,6 @@ public:
 			// If this is not the case something with the dynamic rehashing didn't work out
 			assert(entry.getKey() == key);
 			entry.markDeleted();
-			--_elementAmount;
 			++count;
 			++bucket.b;
 			--bucket.elementAmount;
@@ -295,14 +294,17 @@ public:
     }
 
     size_t size() const override {
-		return _elementAmount;
+    	size_t _size = 0;
+    	for (size_t i = 0; i < buckets.size(); ++i) {
+    		_size += buckets[i].size();
+    	}
+		return _size;
 	}
 
     void clear() override {
 		M = calculateM(0);
 		count = 0;
 		bucketAmount = calculateBucketAmount(0);
-		_elementAmount = 0;
 		buckets.clear();
     	buckets.resize(bucketAmount, bucket<Key, T>());
 	}
@@ -350,7 +352,7 @@ private:
 
 		// TODO Use copy_if with move_iterator?
 		// Collecting entries of the bucket
-		std::vector<bucket_entry<Key, T>> entries(hadCollision ? _elementAmount + 1 : _elementAmount);
+		std::vector<bucket_entry<Key, T>> entries(hadCollision ? size() + 1 : size());
 		size_t j = 0;
 		for (size_t b = 0; b < buckets.size(); ++b) {
 			bucket<Key, T>& bucket = buckets[b];
@@ -374,7 +376,7 @@ private:
 
 	void rehashAll() {
 		// Collecting entries of the bucket
-		std::vector<bucket_entry<Key, T>> entries(_elementAmount);
+		std::vector<bucket_entry<Key, T>> entries(size());
 		size_t j = 0;
 		for (size_t b = 0; b < buckets.size(); ++b) {
 			bucket<Key, T>& bucket = buckets[b];
