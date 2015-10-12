@@ -32,6 +32,7 @@ public:
 	bucket() : bucket(0) { }
 
 	bucket(std::vector<bucket_entry<Key, T>> initialEntries) : bucket(initialEntries.size()) {
+		elementAmount = initialEntries.size();
 		insertAll(initialEntries);
 	}
 
@@ -425,7 +426,7 @@ private:
 		buckets.resize(bucketAmount);
 		for (size_t i = 0; i < bucketAmount; ++i) {
 			std::vector<bucket_entry<Key, T>>& bucketEntries = bucketedEntries[i];
-			buckets.push_back(bucket<Key, T>(bucketEntries));
+			buckets[i] = bucket<Key, T>(bucketEntries);
 		}
 	}
 };
