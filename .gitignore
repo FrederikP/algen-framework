@@ -26,3 +26,6 @@ vgcore.*
 .project
 .cproject
 .settings
+
+
+callgrind.out*
