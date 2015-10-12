@@ -99,17 +99,9 @@ private:
 	bool initialized;
 	bool deleteFlag;
 public:
-	bucket_entry() {
-		_key = Key();
-		_value = T();
-		initialized = false;
-		deleteFlag = false;
+	bucket_entry() : _key(Key()), _value(T()), initialized(false), deleteFlag(false) {
 	}
-	bucket_entry(Key& key, T& value) {
-		_key = key;
-		_value = value;
-		initialized = false;
-		deleteFlag = false;
+	bucket_entry(Key& key, T& value)  : _key(key), _value(value), initialized(false), deleteFlag(false)  {
 	}
 	
 	Key& getKey() {
