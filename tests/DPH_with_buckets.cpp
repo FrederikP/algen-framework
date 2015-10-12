@@ -157,3 +157,17 @@ SCENARIO("DPH_with_buckets 0/bucket size hashing failure", "[hashtable]") {
 		}
 	}
 }
+
+SCENARIO("DPH_with_buckets rehash counting", "[hashtable]") {
+	GIVEN("A DPH_with_buckets multiple times") {
+		size_t hashtableAmount = 10;
+		size_t hashtableSize = 4500;
+		size_t elementAmount = hashtableSize * 100;
+		for (size_t h = 0; h < hashtableAmount; h++) {
+			hashtable::DPH_with_buckets<int, int> m(hashtableSize);
+			for (size_t i = 0; i < elementAmount; ++i) {
+				m[i] = i*i;
+			}
+		}
+	}
+}

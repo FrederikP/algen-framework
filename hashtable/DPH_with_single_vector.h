@@ -18,7 +18,7 @@ public:
 	size_t start;
 	size_t length;
 	size_t elementAmount;
-	hash_function hashFunction;
+	bucket_hash_function hashFunction;
 
 	bucket_info() : bucket_info(0, 0, 0, 0, 0, 0) { }
 
@@ -56,7 +56,7 @@ private:
 	random_generator randoms;
 	
 	PreHashFcn preHashFunction;
-	hash_function bucketHashFunction;
+	bucket_hash_function bucketHashFunction;
 	std::vector<bucket_info> bucketInfos;
 	std::vector< bucket_entry< Key, T > > entries;
 	
