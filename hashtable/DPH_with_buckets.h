@@ -21,11 +21,13 @@ public:
 	size_t elementAmount;
 
 private:
+	static const size_t maxHashFunctionRecalculationAttempts = 10;
+
 	prime_generator primes;
 	random_generator randoms;
 
 	PreHashFcn preHashFunction;
-	hash_function hashFunction;
+	entry_hash_function hashFunction;
 	std::vector<bucket_entry<Key, T>> entries;
 
 public:
@@ -43,10 +45,9 @@ public:
 		elementAmount(0),
 		entries(length)
 	{
-		size_t prime = primes(length);
-		size_t random = randoms(1, prime - 1);
-		size_t random2 = randoms(1, prime - 1);
-		hashFunction.setParameters(random, random2, prime, length);
+		size_t random = randoms(1, length - 1);
+		size_t random2 = randoms(1, length - 1);
+		hashFunction.setParameters(random, random2, length);
 	}
 
 	bucket_entry<Key, T>& operator[](size_t preHash) {
@@ -102,22 +103,24 @@ public:
 	}
 
 	// TODO should be private
-	static size_t calculateBucketLength(size_t bucketM) {
-		return 2 * bucketM * (bucketM - 1);
+	size_t calculateBucketLength(size_t bucketM) {
+		size_t minLength = 0.2 * bucketM * (bucketM - 1);
+		return primes(minLength);
 	}
 
 private:
 	void insertAll(std::vector<bucket_entry<Key, T>> bucketEntries) {
 		// Choose a new injective hash function randomly
+		size_t hashFunctionRecalculationAttempts = 0;
 		bool isInjective;
 		do {
 			std::cout << "rehashBucket: Creating new entry hash function" << "\n";
+			++hashFunctionRecalculationAttempts;
 
 			isInjective = true;
-			size_t prime = primes(length);
-			size_t random = randoms(1, prime - 1);
-			size_t random2 = randoms(1, prime - 1);
-			hashFunction.setParameters(random, random2, prime, length);
+			size_t random = randoms(1, length - 1);
+			size_t random2 = randoms(1, length - 1);
+			hashFunction.setParameters(random, random2, length);
 
 			std::vector<size_t> indices = std::vector<size_t>(length);
 			for(size_t i = 0; i < bucketEntries.size(); ++i) {
@@ -132,6 +135,15 @@ private:
 						indices[index] = 1;
 					}
 				}
+			}
+
+			if (hashFunctionRecalculationAttempts > maxHashFunctionRecalculationAttempts) {
+				std::cout << "More than " << maxHashFunctionRecalculationAttempts << " attempts to find a new hash function." << "\n";
+
+				length *= 1.1;
+				entries.clear();
+				entries.resize(length);
+				hashFunctionRecalculationAttempts = 0;
 			}
 		} while (!isInjective);
 
@@ -163,7 +175,7 @@ private:
 	random_generator randoms;
 	
 	PreHashFcn preHashFunction;
-	hash_function bucketHashFunction;
+	bucket_hash_function bucketHashFunction;
 	std::vector<bucket<Key, T>> buckets;
 	
 public:

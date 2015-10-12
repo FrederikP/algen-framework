@@ -10,7 +10,7 @@ using namespace common::monad;
 
 namespace hashtable {
 
-class hash_function {
+class bucket_hash_function {
 private:
 	size_t _random;
 	size_t _random2;
@@ -18,8 +18,8 @@ private:
 	size_t _size;
 	
 public:
-	hash_function() : hash_function(0, 0, 0, 0) { }
-	hash_function(size_t random, size_t random2, size_t prime, size_t size) :
+	bucket_hash_function() : bucket_hash_function(0, 0, 0, 0) { }
+	bucket_hash_function(size_t random, size_t random2, size_t prime, size_t size) :
 		_random(random),
 		_random2(random2),
 		_prime(prime),
@@ -40,6 +40,34 @@ public:
 		size_t primed = sum % _prime;
 		size_t sized = primed % _size;
 		return sized;
+	}
+};
+
+class entry_hash_function {
+private:
+	size_t _random;
+	size_t _random2;
+	size_t _prime;
+
+public:
+	entry_hash_function() : entry_hash_function(0, 0, 0) { }
+	entry_hash_function(size_t random, size_t random2, size_t prime) :
+		_random(random),
+		_random2(random2),
+		_prime(prime)
+	{ }
+
+	void setParameters(size_t random, size_t random2, size_t prime) {
+		_random = random;
+		_random2 = random2;
+		_prime = prime;
+	}
+	size_t operator()(size_t& x) const {
+		assert(_random >= size_t(1) and _random <= (_prime - 1));
+		size_t product = _random * x;
+		size_t sum = product + _random2;
+		size_t primed = sum % _prime;
+		return primed;
 	}
 };
 
