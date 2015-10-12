@@ -54,8 +54,8 @@ public:
 
         const std::vector<Configuration> configs{
             std::make_pair(1<<16, 0xDECAF),
-            //std::make_pair(1<<18, 0xBEEF),
-            //std::make_pair(1<<20, 0xC0FFEE),
+            std::make_pair(1<<18, 0xBEEF),
+            std::make_pair(1<<20, 0xC0FFEE),
             //std::make_pair(1<<22, 0xF005BA11),
             //std::make_pair(1<<24, 0xBA5EBA11),
             //std::make_pair(1<<26, 0xCA55E77E)

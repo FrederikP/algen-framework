@@ -118,7 +118,7 @@ private:
 		size_t hashFunctionRecalculationAttempts = 0;
 		bool isInjective;
 		do {
-			std::cout << "rehashBucket: Creating new entry hash function" << "\n";
+//			std::cout << "rehashBucket: Creating new entry hash function" << "\n";
 			++hashFunctionRecalculationAttempts;
 
 			isInjective = true;
@@ -142,7 +142,7 @@ private:
 			}
 
 			if (hashFunctionRecalculationAttempts > maxHashFunctionRecalculationAttempts) {
-				std::cout << "More than " << maxHashFunctionRecalculationAttempts << " attempts to find a new hash function." << "\n";
+//				std::cout << "More than " << maxHashFunctionRecalculationAttempts << " attempts to find a new hash function." << "\n";
 
 				length *= 2;
 				entries.clear();
@@ -228,11 +228,11 @@ public:
 		}
 		bool wasRehashed = false;
 		if (count >= M) {
-			std::cout << "Rehash all count>=M: " << count << ">="<< M << "\n";
+//			std::cout << "Rehash all count>=M: " << count << ">="<< M << "\n";
 			rehashAll(key);
 			wasRehashed = true;
 		} else if (_bucket.b <= _bucket.M and entry.getKey() != key) {
-			std::cout << "Rehashing bucket bucket.b <= bucket.M: " << _bucket.b << "<="<< _bucket.M << "\n";
+//			std::cout << "Rehashing bucket bucket.b <= bucket.M: " << _bucket.b << "<="<< _bucket.M << "\n";
 			_bucket.rehash(key);
 			wasRehashed= true;
 		} else if (_bucket.b > _bucket.M) {
@@ -240,10 +240,10 @@ public:
 			size_t newBucketM = _bucket.M * 2;
 			size_t newBucketLength = _bucket.calculateBucketLength(newBucketM);
 			if (globalConditionIsSatisfied(newBucketLength, bucketIndex)) {
-				std::cout << "Resizing bucket bucket.b > bucket.M: " << _bucket.b << ">"<< _bucket.M << "\n";
+//				std::cout << "Resizing bucket bucket.b > bucket.M: " << _bucket.b << ">"<< _bucket.M << "\n";
 				_bucket.resizeAndRehash(key);
 			} else {
-				std::cout << "Rehash all instead of bucket resize\n";
+//				std::cout << "Rehash all instead of bucket resize\n";
 				rehashAll();
 			}
 			wasRehashed = true;
@@ -400,7 +400,7 @@ private:
 		std::vector<std::vector<bucket_entry<Key, T>>> bucketedEntries;
 		size_t lengthSum = 0;
 		do {
-			std::cout << "rehashAll: Creating new bucket hash function" << "\n";
+//			std::cout << "rehashAll: Creating new bucket hash function" << "\n";
 
 			size_t prime = primes(count);
 			size_t random = randoms(1, prime - 1);
