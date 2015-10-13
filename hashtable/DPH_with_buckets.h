@@ -14,6 +14,12 @@ namespace hashtable {
 template <typename Key, typename T,
 		  typename PreHashFcn = std::hash<Key>>
 class bucket {
+private:
+	size_t _capacityFactor;
+	size_t _lengthFactor;
+	size_t _maxRehashAttempts;
+	size_t _rehashLengthFactor;
+
 public:
 	size_t M;
 	size_t b;
@@ -21,8 +27,6 @@ public:
 	size_t elementAmount;
 
 private:
-	static const size_t maxHashFunctionRecalculationAttempts = 10;
-
 	prime_generator primes;
 	random_generator randoms;
 
@@ -33,12 +37,25 @@ private:
 public:
 	bucket() : bucket(0) { }
 
-	bucket(std::vector<bucket_entry<Key, T>> initialEntries) : bucket(initialEntries.size()) {
+	bucket(std::vector<bucket_entry<Key, T>> initialEntries,
+		   size_t capacityFactor, size_t lengthFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
+	bucket(initialEntries.size(),
+		   capacityFactor, lengthFactor, maxRehashAttempts, rehashLengthFactor)
+	{
 		elementAmount = initialEntries.size();
 		insertAll(initialEntries);
 	}
 
-	bucket(size_t initialSize) :
+	bucket(size_t initialSize) : bucket(initialSize,
+										2, 5, 10, 2) { }
+
+	bucket(size_t initialSize,
+		   size_t capacityFactor, size_t lengthFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
+		_capacityFactor(capacityFactor),
+		_lengthFactor(lengthFactor),
+		_maxRehashAttempts(maxRehashAttempts),
+		_rehashLengthFactor(rehashLengthFactor),
+
 		M(std::max(size_t(10), initialSize)),
 		b(0),
 		length(calculateBucketLength(M)),
@@ -72,7 +89,7 @@ public:
     }
 
 	void resizeAndRehash(const Key& key) {
-		M *= 2;
+		M *= _capacityFactor;
 		length = calculateBucketLength(M);
 		rehash(key);
 	}
@@ -109,18 +126,18 @@ public:
 
 	// TODO should be private
 	size_t calculateBucketLength(size_t bucketM) {
-		size_t minLength = 5 * bucketM;
+		size_t minLength = _lengthFactor * bucketM;
 		return primes(minLength);
 	}
 
 private:
 	void insertAll(std::vector<bucket_entry<Key, T>> bucketEntries) {
 		// Choose a new injective hash function randomly
-		size_t hashFunctionRecalculationAttempts = 0;
+		size_t rehashAttempts = 0;
 		bool isInjective;
 		do {
 //			std::cout << "rehashBucket: Creating new entry hash function" << "\n";
-			++hashFunctionRecalculationAttempts;
+			++rehashAttempts;
 
 			isInjective = true;
 			size_t random = randoms(1, length - 1);
@@ -142,13 +159,13 @@ private:
 				}
 			}
 
-			if (hashFunctionRecalculationAttempts > maxHashFunctionRecalculationAttempts) {
+			if (rehashAttempts > _maxRehashAttempts) {
 //				std::cout << "More than " << maxHashFunctionRecalculationAttempts << " attempts to find a new hash function." << "\n";
 
-				length *= 2;
+				length *= _rehashLengthFactor;
 				entries.clear();
 				entries.resize(length);
-				hashFunctionRecalculationAttempts = 0;
+				rehashAttempts = 0;
 			}
 		} while (!isInjective);
 
@@ -168,7 +185,13 @@ template <typename Key, typename T,
 		  typename PreHashFcn = std::hash<Key>>
 class DPH_with_buckets : public hashtable<Key, T> { // DPH = Dynamic Perfect Hashing
 private:
-	static const size_t c = 5;
+	size_t capacityFactor;
+	size_t _elementAmountPerBucket;
+
+	size_t _bucketCapacityFactor;
+	size_t _bucketLengthFactor;
+	size_t _bucketMaxRehashAttempts;
+	size_t _bucketRehashLengthFactor;
 
 	size_t M;
 	size_t count;
@@ -195,14 +218,29 @@ public:
         ));
     }
 	
-    DPH_with_buckets(size_t initialElementAmount) :
+    DPH_with_buckets(size_t initialElementAmount) : DPH_with_buckets(initialElementAmount,
+    																 2, 5, 10, 2,
+																	 5, 1500) { }
+
+    DPH_with_buckets(size_t initialElementAmount,
+    				 size_t bucketCapacityFactor, size_t bucketLengthFactor, size_t bucketMaxRehashAttempts, size_t bucketRehashLengthFactor,
+					 size_t tableCapacityFactor, size_t elementAmountPerBucket) :
     	hashtable<Key, T>(),
+		capacityFactor(tableCapacityFactor),
+		_elementAmountPerBucket(elementAmountPerBucket),
+
+		_bucketCapacityFactor(bucketCapacityFactor),
+		_bucketLengthFactor(bucketLengthFactor),
+		_bucketMaxRehashAttempts(bucketMaxRehashAttempts),
+		_bucketRehashLengthFactor(bucketRehashLengthFactor),
+
 		M(calculateM(initialElementAmount)),
 		count(0),
 		bucketAmount(calculateBucketAmount(initialElementAmount)),
 		primes(),
 		randoms(),
-    	buckets(bucketAmount, bucket<Key, T>(initialElementAmount / bucketAmount))
+    	buckets(bucketAmount, bucket<Key, T>(_elementAmountPerBucket,
+    										 _bucketCapacityFactor, _bucketLengthFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor))
 	{
 		size_t prime = primes(initialElementAmount);
 		size_t random = randoms(1, prime - 1);
@@ -308,16 +346,16 @@ public:
 		count = 0;
 		bucketAmount = calculateBucketAmount(0);
 		buckets.clear();
-    	buckets.resize(bucketAmount, bucket<Key, T>());
+    	buckets.resize(bucketAmount, bucket<Key, T>(0, _bucketCapacityFactor, _bucketLengthFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor));
 	}
 
 private:
-	static size_t calculateM(size_t elementAmount) {
-		return (1 + c) * std::max(elementAmount, size_t(4));
+	size_t calculateM(size_t elementAmount) {
+		return (1 + capacityFactor) * std::max(elementAmount, size_t(4));
 	}
 
-	static size_t calculateBucketAmount(size_t elementAmount) {
-		return std::max(size_t(10), elementAmount / 1500);
+	size_t calculateBucketAmount(size_t elementAmount) {
+		return std::max(size_t(10), elementAmount / _elementAmountPerBucket);
 	}
 
 	bool globalConditionIsSatisfied(size_t bucketLengthOfBucketToResize,
@@ -442,7 +480,8 @@ private:
 		buckets.resize(bucketAmount);
 		for (size_t i = 0; i < bucketAmount; ++i) {
 			std::vector<bucket_entry<Key, T>>& bucketEntries = bucketedEntries[i];
-			buckets[i] = bucket<Key, T>(bucketEntries);
+			buckets[i] = bucket<Key, T>(bucketEntries,
+					 	 	 	 	 	_bucketCapacityFactor, _bucketLengthFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor);
 		}
 	}
 };
