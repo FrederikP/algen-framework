@@ -32,7 +32,7 @@ public:
 		_prime = prime;
 		_size = size;
 	}
-	size_t operator()(size_t& x) const {
+	size_t operator()(const size_t& x) const {
 		assert(_random >= size_t(1) and _random <= (_prime - 1));
 		assert(_prime >= _size);
 		size_t product = _random * x;
@@ -62,7 +62,7 @@ public:
 		_random2 = random2;
 		_prime = prime;
 	}
-	size_t operator()(size_t& x) const {
+	size_t operator()(const size_t& x) const {
 		assert(_random >= size_t(1) and _random <= (_prime - 1));
 		size_t product = _random * x;
 		size_t sum = product + _random2;
@@ -112,18 +112,11 @@ public:
 		return _value;
 	}
 
-	maybe<T> find(const Key &requestedKey) const {
-		if (initialized && !deleteFlag) {
-			// If this is not the case something with the dynamic rehashing didn't work out
-			assert(requestedKey == requestedKey);
-			((void) requestedKey);
-			return just<T>(_value);
-		} else {
-			return nothing<T>();
-		}
+	T getValue() const {
+		return _value;
 	}
 
-	bool isInitialized() {
+	bool isInitialized() const {
 		return initialized;
 	}
 
@@ -132,7 +125,7 @@ public:
 		initialized = true;
 	}
 
-	bool isDeleted() {
+	bool isDeleted() const {
 		return deleteFlag;
 	}
 

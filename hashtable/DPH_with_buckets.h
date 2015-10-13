@@ -61,9 +61,17 @@ public:
     	return entries;
     }
 
-    maybe<T> find(size_t preHash, const Key &key) const {
-    	size_t index = hashFunction(preHash);
-		return entries[index].find(key);
+    maybe<T> find(const size_t preHash, const Key &key) const {
+    	const size_t index = hashFunction(preHash);
+    	const bucket_entry<Key, T> entry = entries[index];
+		if (entry.isInitialized() && !entry.isDeleted()) {
+			// If this is not the case something with the dynamic rehashing didn't work out
+			assert(entry.getKey() == key);
+			((void)key);
+			return just<T>(entry.getValue());
+		} else {
+			return nothing<T>();
+		}
     }
 
     size_t size() const {
@@ -267,9 +275,10 @@ public:
     }
 
     maybe<T> find(const Key &key) const override {
-		size_t preHash = preHashFunction(key);
-		size_t bucketIndex = bucketHashFunction(preHash);
-		return buckets[bucketIndex].find(preHash, key);
+		const size_t preHash = preHashFunction(key);
+		const size_t bucketIndex = bucketHashFunction(preHash);
+		const bucket<Key, T> bucket = buckets[bucketIndex];
+		return bucket.find(preHash, key);
     }
 
     size_t erase(const Key &key) override {
