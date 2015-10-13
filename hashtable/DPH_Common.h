@@ -112,11 +112,11 @@ public:
 		return _value;
 	}
 
-	maybe<T> find(const Key &requestedKey) const {
+	maybe<T> find(const Key &key) const {
 		if (initialized && !deleteFlag) {
 			// If this is not the case something with the dynamic rehashing didn't work out
-			assert(requestedKey == requestedKey);
-			((void) requestedKey);
+			assert(_key == key);
+			((void) key);
 			return just<T>(_value);
 		} else {
 			return nothing<T>();
