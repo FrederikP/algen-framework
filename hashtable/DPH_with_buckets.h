@@ -79,9 +79,8 @@ public:
     }
 
     maybe<T> find(size_t preHash, const Key &key) const {
-    	const size_t index = hashFunction(preHash);
-    	const bucket_entry<Key, T> entry = entries[index];
-		return entry.find(key);
+    	size_t index = hashFunction(preHash);
+		return entries[index].find(key);
     }
 
     size_t size() const {
@@ -307,9 +306,8 @@ public:
 
     maybe<T> find(const Key &key) const override {
 		size_t preHash = preHashFunction(key);
-		const size_t bucketIndex = bucketHashFunction(preHash);
-		const bucket<Key, T> bucket = buckets[bucketIndex];
-		return bucket.find(preHash, key);
+		size_t bucketIndex = bucketHashFunction(preHash);
+		return buckets[bucketIndex].find(preHash, key);
     }
 
     size_t erase(const Key &key) override {
