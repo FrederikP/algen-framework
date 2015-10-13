@@ -154,7 +154,7 @@ private:
 		// TODO Use move semantic instead of copying?
 		// Inserting the entries in the table
 		for(size_t i = 0; i < bucketEntries.size(); ++i) {
-			bucket_entry<Key, T> entry = bucketEntries[i];
+			bucket_entry<Key, T>& entry = bucketEntries[i];
 			size_t preHash = preHashFunction(entry.getKey());
 			size_t index = hashFunction(preHash);
 			entries[index] = entry;
