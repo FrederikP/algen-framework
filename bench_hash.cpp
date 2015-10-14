@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     hashtable::sparse_hash_map<int, int>::register_contenders(contenders);
 
 	hashtable::DPH_with_buckets<int, int>::register_contenders(contenders);
-//	hashtable::DPH_with_buckets_2<int, int>::register_contenders(contenders);
+	hashtable::DPH_with_buckets_2<int, int>::register_contenders(contenders);
 //	hashtable::DPH_with_single_vector<int, int>::register_contenders(contenders);
 	//hashtable::DPH_with_array_buckets<int, int>::register_contenders(contenders);
 

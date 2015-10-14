@@ -275,7 +275,7 @@ public:
 			wasRehashed= true;
 		} else if (_bucket.b > _bucket.M) {
 			//TODO Code duplication
-			size_t newBucketM = _bucket.M * 2;
+			size_t newBucketM = _bucket.M * _bucketCapacityFactor;
 			size_t newBucketLength = _bucket.calculateBucketLength(newBucketM);
 			if (globalConditionIsSatisfied(newBucketLength, bucketIndex)) {
 //				std::cout << "Resizing bucket bucket.b > bucket.M: " << _bucket.b << ">"<< _bucket.M << "\n";

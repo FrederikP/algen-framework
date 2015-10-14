@@ -16,10 +16,12 @@ template <typename Key, typename T,
 class bucket_2 {
 private:
 	size_t _capacityFactor;
+	size_t _lengthFactor;
 	size_t _maxRehashAttempts;
 	size_t _rehashLengthFactor;
 
 public:
+	size_t capacity;
 	size_t length;
 	size_t elementAmount;
 
@@ -35,23 +37,25 @@ public:
 	bucket_2() : bucket_2(0) { }
 
 	bucket_2(std::vector<bucket_entry<Key, T>> initialEntries,
-		     size_t capacityFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
+		     size_t capacityFactor, size_t lengthFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
 	bucket_2(initialEntries.size(),
-		     capacityFactor, maxRehashAttempts, rehashLengthFactor)
+		     capacityFactor, lengthFactor, maxRehashAttempts, rehashLengthFactor)
 	{
 		elementAmount = initialEntries.size();
 		insertAll(initialEntries);
 	}
 
 	bucket_2(size_t initialSize) : bucket_2(initialSize,
-											50, 5, 4) { }
+											2, 5, 5, 2) { }
 
 	bucket_2(size_t initialSize,
-		     size_t capacityFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
+		     size_t capacityFactor, size_t lengthFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
 		_capacityFactor(capacityFactor),
+		_lengthFactor(lengthFactor),
 		_maxRehashAttempts(maxRehashAttempts),
 		_rehashLengthFactor(rehashLengthFactor),
-		length(primes(std::max(size_t(10), initialSize))),
+		capacity(std::max(size_t(10), initialSize)),
+		length(calculateLength(capacity)),
 		elementAmount(0),
 		entries(length)
 	{
@@ -81,7 +85,8 @@ public:
     }
 
 	void resizeAndRehash(const Key& key) {
-		length = primes(_capacityFactor * elementAmount);
+		capacity = elementAmount * _capacityFactor;
+		length = calculateLength(capacity);
 		rehash(key);
 	}
 
@@ -112,6 +117,12 @@ public:
 		entries.clear();
 		entries.resize(length);
 		insertAll(bucketEntries);
+	}
+
+	// TODO should be private
+	size_t calculateLength(size_t bucketCapacity) {
+		size_t minLength = _lengthFactor * bucketCapacity;
+		return primes(minLength);
 	}
 
 private:
@@ -169,15 +180,15 @@ template <typename Key, typename T,
 		  typename PreHashFcn = std::hash<Key>>
 class DPH_with_buckets_2 : public hashtable<Key, T> { // DPH = Dynamic Perfect Hashing
 private:
-	size_t capacityFactor;
+	size_t _capacityFactor;
 	size_t _elementAmountPerBucket;
 
 	size_t _bucketCapacityFactor;
+	size_t _bucketLengthFactor;
 	size_t _bucketMaxRehashAttempts;
 	size_t _bucketRehashLengthFactor;
 
-	size_t M;
-	
+	size_t capacity;
 	size_t bucketAmount;
 
 	prime_generator primes;
@@ -201,26 +212,27 @@ public:
     }
 	
     DPH_with_buckets_2(size_t initialElementAmount) : DPH_with_buckets_2(initialElementAmount,
-    																     50, 5, 4,
-																	     5, 100) { }
+    																	 2, 5, 5, 2,
+																	     2, 1500) { }
 
     DPH_with_buckets_2(size_t initialElementAmount,
-    				   size_t bucketCapacityFactor, size_t bucketMaxRehashAttempts, size_t bucketRehashLengthFactor,
+    				   size_t bucketCapacityFactor, size_t bucketLengthFactor, size_t bucketMaxRehashAttempts, size_t bucketRehashLengthFactor,
 					   size_t tableCapacityFactor, size_t elementAmountPerBucket) :
     	hashtable<Key, T>(),
-		capacityFactor(tableCapacityFactor),
+		_capacityFactor(tableCapacityFactor),
 		_elementAmountPerBucket(elementAmountPerBucket),
 
 		_bucketCapacityFactor(bucketCapacityFactor),
+		_bucketLengthFactor(bucketLengthFactor),
 		_bucketMaxRehashAttempts(bucketMaxRehashAttempts),
 		_bucketRehashLengthFactor(bucketRehashLengthFactor),
 
-		M(calculateM(initialElementAmount)),
+		capacity(initialElementAmount),
 		bucketAmount(calculateBucketAmount(initialElementAmount)),
 		primes(),
 		randoms(),
     	buckets(bucketAmount, bucket_2<Key, T>(_elementAmountPerBucket,
-    										   _bucketCapacityFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor))
+    										   _bucketCapacityFactor, _bucketLengthFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor))
 	{
 		size_t prime = primes(initialElementAmount);
 		size_t random = randoms(1, prime - 1);
@@ -242,17 +254,18 @@ public:
 			++_bucket.elementAmount;
 		}
 		bool wasRehashed = false;
-		if (size() >= M / 2 || _bucket.elementAmount > _elementAmountPerBucket) {
+		if (size() > capacity || _bucket.elementAmount > _elementAmountPerBucket) {
 //			std::cout << "Rehash all\n";
 			rehashAll(key);
 			wasRehashed = true;
-		} else if (_bucket.elementAmount <= _bucket.length / 2 and entry.getKey() != key) {
+		} else if (_bucket.elementAmount <= _bucket.capacity and entry.getKey() != key) {
 //			std::cout << "Rehashing bucket\n";
 			_bucket.rehash(key);
 			wasRehashed= true;
-		} else if (_bucket.elementAmount > _bucket.length / 2) {
+		} else if (_bucket.elementAmount > _bucket.capacity or _bucket.elementAmount <= _bucket.capacity / (_bucketCapacityFactor * 2)) {
 			//TODO Code duplication
-			size_t newBucketLength = primes(_bucketCapacityFactor * _bucket.elementAmount);
+			size_t newBucketCapacity = _bucket.elementAmount * _bucketCapacityFactor;
+			size_t newBucketLength = _bucket.calculateLength(newBucketCapacity);
 			if (globalConditionIsSatisfied(newBucketLength, bucketIndex)) {
 	//			std::cout << "Resizing bucket: elementAmount=" << _bucket.elementAmount << "  oldLength= " << _bucket.length << "\n";
 				_bucket.resizeAndRehash(key);
@@ -300,7 +313,7 @@ public:
 			--bucket.elementAmount;
 			return 1;
 		}
-		if (size() < M / 10) {
+		if (size() < capacity / (_capacityFactor * 2)) {
 			rehashAll();
 		}
 		return 0;
@@ -315,17 +328,13 @@ public:
 	}
 
     void clear() override {
-		M = calculateM(size());
+		capacity = size() * _capacityFactor;
 		bucketAmount = calculateBucketAmount(0);
 		buckets.clear();
-    	buckets.resize(bucketAmount, bucket_2<Key, T>(0, _bucketCapacityFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor));
+    	buckets.resize(bucketAmount, bucket_2<Key, T>(0, _bucketCapacityFactor, _bucketLengthFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor));
 	}
 
 private:
-	size_t calculateM(size_t numberOfElements) {
-		return (1 + capacityFactor) * std::max(numberOfElements, size_t(10));
-	}
-
 	size_t calculateBucketAmount(size_t elementAmount) {
 		return std::max(size_t(10), elementAmount / _elementAmountPerBucket);
 	}
@@ -352,7 +361,7 @@ private:
 	}
 
 	bool globalConditionIsSatisfied(size_t lengthSum) {
-		return lengthSum <= ((32 * M * M) / bucketAmount) + 4 * M;
+		return lengthSum <= ((32 * capacity * capacity) / bucketAmount) + 4 * capacity;
 	}
 
 	void rehashAll(const Key &key) {
@@ -405,8 +414,8 @@ private:
 	}
 
 	void rehashAll(std::vector<bucket_entry<Key, T>>& elements) {
-		M = calculateM(size());
-		bucketAmount = calculateBucketAmount(M);
+		capacity = elements.size() * _capacityFactor;
+		bucketAmount = calculateBucketAmount(capacity);
 
 		std::vector<std::vector<bucket_entry<Key, T>>> bucketedEntries;
 		size_t lengthSum = 0;
@@ -452,7 +461,7 @@ private:
 		for (size_t i = 0; i < bucketAmount; ++i) {
 			std::vector<bucket_entry<Key, T>>& bucketEntries = bucketedEntries[i];
 			buckets[i] = bucket_2<Key, T>(bucketEntries,
-					 	 	 	 	 	_bucketCapacityFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor);
+					 	 	 	 	 	_bucketCapacityFactor, _bucketLengthFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor);
 		}
 	}
 };
