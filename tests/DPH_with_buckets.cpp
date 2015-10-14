@@ -168,6 +168,10 @@ SCENARIO("DPH_with_buckets rehash counting", "[hashtable]") {
 			for (size_t i = 0; i < elementAmount; ++i) {
 				m[i] = i*i;
 			}
+			CHECK(m[0] == 0);
+			CHECK(m[100] == 10000);
+			CHECK(m[4000] == 16000000);
 		}
+
 	}
 }
