@@ -210,31 +210,31 @@ public:
     // Register all contenders in the list
     static void register_contenders(common::contender_list<hashtable<Key, T>> &list) {
         using Factory = common::contender_factory<hashtable<Key, T>>;
-//        list.register_contender(Factory("DPH-with-buckets-1500", "DPH-with-buckets-2500",
+        list.register_contender(Factory("DPH-with-buckets", "DPH-with-buckets",
+            [](){
+				return new DPH_with_buckets(1000);
+			}
+        ));
+//        list.register_contender(Factory("DPH-with-buckets-4500", "DPH-with-buckets-4500",
 //            [](){
-//				return new DPH_with_buckets(1000, 2, 5, 10, 2, 5, 2500);
+//				return new DPH_with_buckets(1000, 2, 5, 10, 2, 5, 4500);
 //			}
 //        ));
-//        list.register_contender(Factory("DPH-with-buckets-1000", "DPH-with-buckets-3000",
+//        list.register_contender(Factory("DPH-with-buckets-250", "DPH-with-buckets-250",
 //            [](){
-//				return new DPH_with_buckets(1000, 2, 5, 10, 2, 5, 3000);
+//				return new DPH_with_buckets(1000, 2, 5, 10, 2, 5, 250);
 //			}
 //        ));
-//        list.register_contender(Factory("DPH-with-buckets-500", "DPH-with-buckets-3500",
+//        list.register_contender(Factory("DPH-with-buckets-3500", "DPH-with-buckets-3500",
 //            [](){
 //				return new DPH_with_buckets(1000, 2, 5, 10, 2, 5, 3500);
 //			}
 //        ));
-        list.register_contender(Factory("DPH-with-buckets", "DPH-with-buckets",
-            [](){ 
-				return new DPH_with_buckets(1000);
-			}
-        ));
     }
 	
     DPH_with_buckets(size_t initialElementAmount) : DPH_with_buckets(initialElementAmount,
     																 2, 5, 10, 2,
-																	 5, 1500) { }
+																	 5, 3500) { }
 
     DPH_with_buckets(size_t initialElementAmount,
     				 size_t bucketCapacityFactor, size_t bucketLengthFactor, size_t bucketMaxRehashAttempts, size_t bucketRehashLengthFactor,

@@ -205,15 +205,25 @@ public:
     static void register_contenders(common::contender_list<hashtable<Key, T>> &list) {
         using Factory = common::contender_factory<hashtable<Key, T>>;
         list.register_contender(Factory("DPH-with-buckets-2", "DPH-with-buckets-2",
-            [](){ 
+            [](){
 				return new DPH_with_buckets_2(1000);
 			}
         ));
+//        list.register_contender(Factory("DPH-with-buckets-2-3000", "DPH-with-buckets-2-3000",
+//            [](){
+//				return new DPH_with_buckets_2(1000, 2, 5, 5, 2, 2, 3000);
+//			}
+//        ));
+//        list.register_contender(Factory("DPH-with-buckets-2-3500", "DPH-with-buckets-2-3500",
+//            [](){
+//				return new DPH_with_buckets_2(1000, 2, 5, 5, 2, 2, 3500);
+//			}
+//        ));
     }
 	
     DPH_with_buckets_2(size_t initialElementAmount) : DPH_with_buckets_2(initialElementAmount,
     																	 2, 5, 5, 2,
-																	     2, 1500) { }
+																	     2, 3000) { }
 
     DPH_with_buckets_2(size_t initialElementAmount,
     				   size_t bucketCapacityFactor, size_t bucketLengthFactor, size_t bucketMaxRehashAttempts, size_t bucketRehashLengthFactor,
