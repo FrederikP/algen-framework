@@ -210,7 +210,7 @@ public:
     // Register all contenders in the list
     static void register_contenders(common::contender_list<hashtable<Key, T>> &list) {
         using Factory = common::contender_factory<hashtable<Key, T>>;
-        list.register_contender(Factory("DPH_with_buckets", "DPH_with_buckets",
+        list.register_contender(Factory("DPH-with-buckets", "DPH-with-buckets",
             [](){ 
 				return new DPH_with_buckets(1000);
 			}
