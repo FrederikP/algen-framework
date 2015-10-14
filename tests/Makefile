@@ -6,7 +6,8 @@ LDFLAGS = -lprimesieve
 # This is where the test files go
 SRC = maybe.cpp \
       unordered_map.cpp \
-      DPH_with_buckets.cpp
+      DPH_with_buckets.cpp \
+      DPH_with_buckets_2.cpp
 
 BUILDDIR ?= build
 
