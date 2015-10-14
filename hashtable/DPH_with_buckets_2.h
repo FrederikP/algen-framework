@@ -35,19 +35,19 @@ public:
 	bucket_2() : bucket_2(0) { }
 
 	bucket_2(std::vector<bucket_entry<Key, T>> initialEntries,
-		   size_t capacityFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
+		     size_t capacityFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
 	bucket_2(initialEntries.size(),
-		   capacityFactor, maxRehashAttempts, rehashLengthFactor)
+		     capacityFactor, maxRehashAttempts, rehashLengthFactor)
 	{
 		elementAmount = initialEntries.size();
 		insertAll(initialEntries);
 	}
 
 	bucket_2(size_t initialSize) : bucket_2(initialSize,
-										50, 5, 4) { }
+											50, 5, 4) { }
 
 	bucket_2(size_t initialSize,
-		   size_t capacityFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
+		     size_t capacityFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
 		_capacityFactor(capacityFactor),
 		_maxRehashAttempts(maxRehashAttempts),
 		_rehashLengthFactor(rehashLengthFactor),
@@ -201,12 +201,12 @@ public:
     }
 	
     DPH_with_buckets_2(size_t initialElementAmount) : DPH_with_buckets_2(initialElementAmount,
-    																 50, 5, 4,
-																	 5, 100) { }
+    																     50, 5, 4,
+																	     5, 100) { }
 
     DPH_with_buckets_2(size_t initialElementAmount,
-    				 size_t bucketCapacityFactor, size_t bucketMaxRehashAttempts, size_t bucketRehashLengthFactor,
-					 size_t tableCapacityFactor, size_t elementAmountPerBucket) :
+    				   size_t bucketCapacityFactor, size_t bucketMaxRehashAttempts, size_t bucketRehashLengthFactor,
+					   size_t tableCapacityFactor, size_t elementAmountPerBucket) :
     	hashtable<Key, T>(),
 		capacityFactor(tableCapacityFactor),
 		_elementAmountPerBucket(elementAmountPerBucket),
@@ -220,7 +220,7 @@ public:
 		primes(),
 		randoms(),
     	buckets(bucketAmount, bucket_2<Key, T>(_elementAmountPerBucket,
-    										 _bucketCapacityFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor))
+    										   _bucketCapacityFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor))
 	{
 		size_t prime = primes(initialElementAmount);
 		size_t random = randoms(1, prime - 1);
