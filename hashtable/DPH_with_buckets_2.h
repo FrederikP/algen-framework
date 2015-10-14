@@ -234,7 +234,7 @@ public:
     	buckets(bucketAmount, bucket_2<Key, T>(_elementAmountPerBucket,
     										   _bucketCapacityFactor, _bucketLengthFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor))
 	{
-		size_t prime = primes(initialElementAmount);
+		size_t prime = primes(bucketAmount);
 		size_t random = randoms(1, prime - 1);
 		size_t random2 = randoms(1, prime - 1);
 		bucketHashFunction.setParameters(random, random2, prime, bucketAmount);
@@ -422,7 +422,7 @@ private:
 		do {
 //			std::cout << "rehashAll: Creating new bucket hash function" << "\n";
 
-			size_t prime = primes(size());
+			size_t prime = primes(bucketAmount);
 			size_t random = randoms(1, prime - 1);
 			size_t random2 = randoms(1, prime - 1);
 			bucketHashFunction.setParameters(random, random2, prime, bucketAmount);

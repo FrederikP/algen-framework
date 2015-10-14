@@ -210,6 +210,21 @@ public:
     // Register all contenders in the list
     static void register_contenders(common::contender_list<hashtable<Key, T>> &list) {
         using Factory = common::contender_factory<hashtable<Key, T>>;
+//        list.register_contender(Factory("DPH-with-buckets-1500", "DPH-with-buckets-2500",
+//            [](){
+//				return new DPH_with_buckets(1000, 2, 5, 10, 2, 5, 2500);
+//			}
+//        ));
+//        list.register_contender(Factory("DPH-with-buckets-1000", "DPH-with-buckets-3000",
+//            [](){
+//				return new DPH_with_buckets(1000, 2, 5, 10, 2, 5, 3000);
+//			}
+//        ));
+//        list.register_contender(Factory("DPH-with-buckets-500", "DPH-with-buckets-3500",
+//            [](){
+//				return new DPH_with_buckets(1000, 2, 5, 10, 2, 5, 3500);
+//			}
+//        ));
         list.register_contender(Factory("DPH-with-buckets", "DPH-with-buckets",
             [](){ 
 				return new DPH_with_buckets(1000);
@@ -241,7 +256,7 @@ public:
     	buckets(bucketAmount, bucket<Key, T>(_elementAmountPerBucket,
     										 _bucketCapacityFactor, _bucketLengthFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor))
 	{
-		size_t prime = primes(initialElementAmount);
+		size_t prime = primes(bucketAmount);
 		size_t random = randoms(1, prime - 1);
 		size_t random2 = randoms(1, prime - 1);
 		bucketHashFunction.setParameters(random, random2, prime, bucketAmount);
@@ -440,7 +455,7 @@ private:
 		do {
 //			std::cout << "rehashAll: Creating new bucket hash function" << "\n";
 
-			size_t prime = primes(count);
+			size_t prime = primes(bucketAmount);
 			size_t random = randoms(1, prime - 1);
 			size_t random2 = randoms(1, prime - 1);
 			bucketHashFunction.setParameters(random, random2, prime, bucketAmount);
