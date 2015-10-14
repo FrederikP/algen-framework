@@ -16,12 +16,10 @@ template <typename Key, typename T,
 class bucket_2 {
 private:
 	size_t _capacityFactor;
-	size_t _lengthFactor;
 	size_t _maxRehashAttempts;
 	size_t _rehashLengthFactor;
 
 public:
-	size_t M;
 	size_t length;
 	size_t elementAmount;
 
@@ -37,26 +35,23 @@ public:
 	bucket_2() : bucket_2(0) { }
 
 	bucket_2(std::vector<bucket_entry<Key, T>> initialEntries,
-		   size_t capacityFactor, size_t lengthFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
+		   size_t capacityFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
 	bucket_2(initialEntries.size(),
-		   capacityFactor, lengthFactor, maxRehashAttempts, rehashLengthFactor)
+		   capacityFactor, maxRehashAttempts, rehashLengthFactor)
 	{
 		elementAmount = initialEntries.size();
 		insertAll(initialEntries);
 	}
 
 	bucket_2(size_t initialSize) : bucket_2(initialSize,
-										2, 5, 10, 2) { }
+										50, 5, 4) { }
 
 	bucket_2(size_t initialSize,
-		   size_t capacityFactor, size_t lengthFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
+		   size_t capacityFactor, size_t maxRehashAttempts, size_t rehashLengthFactor) :
 		_capacityFactor(capacityFactor),
-		_lengthFactor(lengthFactor),
 		_maxRehashAttempts(maxRehashAttempts),
 		_rehashLengthFactor(rehashLengthFactor),
-
-		M(std::max(size_t(10), initialSize)),
-		length(calculateBucketLength(M)),
+		length(primes(std::max(size_t(10), initialSize))),
 		elementAmount(0),
 		entries(length)
 	{
@@ -86,8 +81,7 @@ public:
     }
 
 	void resizeAndRehash(const Key& key) {
-		M *= _capacityFactor;
-		length = calculateBucketLength(M);
+		length = primes(_capacityFactor * elementAmount);
 		rehash(key);
 	}
 
@@ -120,12 +114,6 @@ public:
 		insertAll(bucketEntries);
 	}
 
-	// TODO should be private
-	size_t calculateBucketLength(size_t bucketM) {
-		size_t minLength = _lengthFactor * bucketM;
-		return primes(minLength);
-	}
-
 private:
 	void insertAll(std::vector<bucket_entry<Key, T>> bucketEntries) {
 		// Choose a new injective hash function randomly
@@ -156,7 +144,7 @@ private:
 			}
 
 			if (rehashAttempts > _maxRehashAttempts) {
-//				std::cout << "More than " << maxHashFunctionRecalculationAttempts << " attempts to find a new hash function." << "\n";
+//				std::cout << "More than " << _maxRehashAttempts << " attempts to find a new hash function." << "\n";
 
 				length *= _rehashLengthFactor;
 				entries.clear();
@@ -185,7 +173,6 @@ private:
 	size_t _elementAmountPerBucket;
 
 	size_t _bucketCapacityFactor;
-	size_t _bucketLengthFactor;
 	size_t _bucketMaxRehashAttempts;
 	size_t _bucketRehashLengthFactor;
 
@@ -214,18 +201,17 @@ public:
     }
 	
     DPH_with_buckets_2(size_t initialElementAmount) : DPH_with_buckets_2(initialElementAmount,
-    																 2, 5, 10, 2,
-																	 5, 1500) { }
+    																 50, 5, 4,
+																	 5, 100) { }
 
     DPH_with_buckets_2(size_t initialElementAmount,
-    				 size_t bucketCapacityFactor, size_t bucketLengthFactor, size_t bucketMaxRehashAttempts, size_t bucketRehashLengthFactor,
+    				 size_t bucketCapacityFactor, size_t bucketMaxRehashAttempts, size_t bucketRehashLengthFactor,
 					 size_t tableCapacityFactor, size_t elementAmountPerBucket) :
     	hashtable<Key, T>(),
 		capacityFactor(tableCapacityFactor),
 		_elementAmountPerBucket(elementAmountPerBucket),
 
 		_bucketCapacityFactor(bucketCapacityFactor),
-		_bucketLengthFactor(bucketLengthFactor),
 		_bucketMaxRehashAttempts(bucketMaxRehashAttempts),
 		_bucketRehashLengthFactor(bucketRehashLengthFactor),
 
@@ -234,7 +220,7 @@ public:
 		primes(),
 		randoms(),
     	buckets(bucketAmount, bucket_2<Key, T>(_elementAmountPerBucket,
-    										 _bucketCapacityFactor, _bucketLengthFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor))
+    										 _bucketCapacityFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor))
 	{
 		size_t prime = primes(initialElementAmount);
 		size_t random = randoms(1, prime - 1);
@@ -256,21 +242,21 @@ public:
 			++_bucket.elementAmount;
 		}
 		bool wasRehashed = false;
-		if (size() >= M / 2) {
+		if (size() >= M / 2 || _bucket.elementAmount > _elementAmountPerBucket) {
 //			std::cout << "Rehash all\n";
 			rehashAll(key);
 			wasRehashed = true;
-		} else if (_bucket.elementAmount <= _bucket.M / 2 and entry.getKey() != key) {
+		} else if (_bucket.elementAmount <= _bucket.length / 2 and entry.getKey() != key) {
 //			std::cout << "Rehashing bucket\n";
 			_bucket.rehash(key);
 			wasRehashed= true;
-		} else if (_bucket.elementAmount > _bucket.M / 2) {
+		} else if (_bucket.elementAmount > _bucket.length / 2) {
 			//TODO Code duplication
-			size_t newBucketM = _bucket.M;
-			size_t newBucketLength = _bucket.calculateBucketLength(newBucketM);
+			size_t newBucketLength = primes(_bucketCapacityFactor * _bucket.elementAmount);
 			if (globalConditionIsSatisfied(newBucketLength, bucketIndex)) {
-//				std::cout << "Resizing bucket bucket.b > bucket.M: " << _bucket.b << ">"<< _bucket.M << "\n";
+	//			std::cout << "Resizing bucket: elementAmount=" << _bucket.elementAmount << "  oldLength= " << _bucket.length << "\n";
 				_bucket.resizeAndRehash(key);
+//				std::cout << " newLength= " << _bucket.length << "\n";
 			} else {
 //				std::cout << "Rehash all instead of bucket resize\n";
 				rehashAll();
@@ -332,7 +318,7 @@ public:
 		M = calculateM(size());
 		bucketAmount = calculateBucketAmount(0);
 		buckets.clear();
-    	buckets.resize(bucketAmount, bucket_2<Key, T>(0, _bucketCapacityFactor, _bucketLengthFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor));
+    	buckets.resize(bucketAmount, bucket_2<Key, T>(0, _bucketCapacityFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor));
 	}
 
 private:
@@ -466,7 +452,7 @@ private:
 		for (size_t i = 0; i < bucketAmount; ++i) {
 			std::vector<bucket_entry<Key, T>>& bucketEntries = bucketedEntries[i];
 			buckets[i] = bucket_2<Key, T>(bucketEntries,
-					 	 	 	 	 	_bucketCapacityFactor, _bucketLengthFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor);
+					 	 	 	 	 	_bucketCapacityFactor, _bucketMaxRehashAttempts, _bucketRehashLengthFactor);
 		}
 	}
 };
