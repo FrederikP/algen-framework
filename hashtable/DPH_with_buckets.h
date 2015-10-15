@@ -218,28 +218,28 @@ public:
 //        list.register_contender(Factory("DPH-with-buckets-2", "DPH-with-buckets-2",
 //            [](){
 //				return new DPH_with_buckets(1000,
-//											7, 5, 5, 2,
+//											7, 2, 5, 2,
 //											6, 3500);
 //			}
 //        ));
-//        list.register_contender(Factory("DPH-with-buckets-7", "DPH-with-buckets-7",
+//        list.register_contender(Factory("DPH-with-buckets-5", "DPH-with-buckets-5",
 //            [](){
 //				return new DPH_with_buckets(1000,
-//											7, 5, 5, 2,
+//											7, 2, 5, 5,
 //											6, 3500);
 //			}
 //        ));
 //        list.register_contender(Factory("DPH-with-buckets-10", "DPH-with-buckets-10",
 //            [](){
 //				return new DPH_with_buckets(1000,
-//											7, 5, 5, 2,
+//											7, 2, 5, 10,
 //											6, 3500);
 //			}
 //        ));
     }
 	
     DPH_with_buckets(size_t initialElementAmount) : DPH_with_buckets(initialElementAmount,
-    																 7, 5, 5, 2,
+    																 7, 2, 5, 2,
 																	 6, 3500) { }
 
     DPH_with_buckets(size_t initialElementAmount,
