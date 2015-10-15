@@ -1,0 +1,45 @@
+%%This is a very basic article template.
+%%There is just one section and two subsections.
+\documentclass{article}
+
+\usepackage[style=numeric,backend=bibtex]{biblatex}
+
+\bibliography{bib}
+
+\begin{document}
+
+
+\section*{Dynamic Perfect Hashing - Implementation}
+
+by Lennart Hensler and Frederik Petersen
+
+\section{Introduction}
+
+Dynamic perfect hashing allows for constant find and amortized constant inserts.
+We implemented a variant based on \cite{di90}, which uses a two layer approach
+to avoid the need of $ n^2 $ space. The outer layer consists of a number of
+buckets with a hash function that distributes the data into the buckets. There
+may be collisions. Each bucket has its own inner hash function and allows
+perfect hashing. If perfect hashing can not be provided in a bucket the data
+structure can be resized and/or new hash functions are generated depending on
+some conditions.
+
+\section{Parameters}
+
+Several parameters have an impact on the performance and needed space of the
+algorithm. We will have a look at several parameters here.
+
+\begin{itemize}
+  \item BucketLengthFactor - How much bigger than the desired capacity will a
+  bucket be. The smaller this is, the faster the data structure needs to be
+  updated. The larger it is, the more space is needed per element.
+  \item BucketCapacityFactor - How much bigger than the number of current
+  elements will a bucket be created for (capacity-wise).
+  \item TODO
+\end{itemize}
+
+\section{Experiment Results}
+
+\printbibliography
+
+\end{document}
