@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"  standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg onload="if (typeof(gnuplot_svg)!='undefined') gnuplot_svg.Init(evt)" 
+ width="1024" height="768" 
+ viewBox="0 0 1024 768"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+
+<title>Gnuplot</title>
+<desc>Produced by GNUPLOT 4.6 patchlevel 6 </desc>
+
+<script type="text/javascript" xlink:href="./gnuplot_svg.js"/>
+
+<!-- Tie mousing to entire bounding box of the plot -->
+<rect x="0" y="0" width="1024" height="768" fill="#ffffff" stroke="black" stroke-width="1"
+onclick="gnuplot_svg.toggleCoordBox(evt)"  onmousemove="gnuplot_svg.moveCoordBox(evt)"/>
+
+<!-- Also track mouse when it is on a plot element -->
+<g id="gnuplot_canvas" onclick="gnuplot_svg.toggleCoordBox(evt)" onmousemove="gnuplot_svg.moveCoordBox(evt)">
+
+<defs>
+
+	<circle id='gpDot' r='0.5' stroke-width='0.5'/>
+	<path id='gpPt0' stroke-width='0.267' stroke='currentColor' d='M-1,0 h2 M0,-1 v2'/>
+	<path id='gpPt1' stroke-width='0.267' stroke='currentColor' d='M-1,-1 L1,1 M1,-1 L-1,1'/>
+	<path id='gpPt2' stroke-width='0.267' stroke='currentColor' d='M-1,0 L1,0 M0,-1 L0,1 M-1,-1 L1,1 M-1,1 L1,-1'/>
+	<rect id='gpPt3' stroke-width='0.267' stroke='currentColor' x='-1' y='-1' width='2' height='2'/>
+	<rect id='gpPt4' stroke-width='0.267' stroke='currentColor' fill='currentColor' x='-1' y='-1' width='2' height='2'/>
+	<circle id='gpPt5' stroke-width='0.267' stroke='currentColor' cx='0' cy='0' r='1'/>
+	<use xlink:href='#gpPt5' id='gpPt6' fill='currentColor' stroke='none'/>
+	<path id='gpPt7' stroke-width='0.267' stroke='currentColor' d='M0,-1.33 L-1.33,0.67 L1.33,0.67 z'/>
+	<use xlink:href='#gpPt7' id='gpPt8' fill='currentColor' stroke='none'/>
+	<use xlink:href='#gpPt7' id='gpPt9' stroke='currentColor' transform='rotate(180)'/>
+	<use xlink:href='#gpPt9' id='gpPt10' fill='currentColor' stroke='none'/>
+	<use xlink:href='#gpPt3' id='gpPt11' stroke='currentColor' transform='rotate(45)'/>
+	<use xlink:href='#gpPt11' id='gpPt12' fill='currentColor' stroke='none'/>
+	<filter id='greybox' filterUnits='objectBoundingBox' x='0' y='0' height='1' width='1'>
+	  <feFlood flood-color='lightgrey' flood-opacity='1' result='grey'/>
+	  <feComposite in='SourceGraphic' in2='grey' operator='atop'/>
+	</filter>
+</defs>
+<g style="fill:none; color:white; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+</g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+</g>
+<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,720.0 L1003.2,720.0  '/></g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M73.6,720.0 L81.1,720.0 M1003.2,720.0 L995.7,720.0  '/>	<g transform="translate(66.7,723.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
+		<text><tspan> 100</tspan></text>
+	</g>
+	<path stroke='black'  d='M73.6,618.4 L77.3,618.4 M1003.2,618.4 L999.5,618.4 M73.6,559.0 L77.3,559.0 M1003.2,559.0 L999.5,559.0 
+		M73.6,516.8 L77.3,516.8 M1003.2,516.8 L999.5,516.8 M73.6,484.1 L77.3,484.1 M1003.2,484.1 L999.5,484.1 
+		M73.6,457.4 L77.3,457.4 M1003.2,457.4 L999.5,457.4 M73.6,434.8 L77.3,434.8 M1003.2,434.8 L999.5,434.8 
+		M73.6,415.3 L77.3,415.3 M1003.2,415.3 L999.5,415.3 M73.6,398.0 L77.3,398.0 M1003.2,398.0 L999.5,398.0 
+		 '/></g>
+<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,382.5 L1003.2,382.5  '/></g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M73.6,382.5 L81.1,382.5 M1003.2,382.5 L995.7,382.5  '/>	<g transform="translate(66.7,386.2)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
+		<text><tspan> 1000</tspan></text>
+	</g>
+	<path stroke='black'  d='M73.6,281.0 L77.3,281.0 M1003.2,281.0 L999.5,281.0 M73.6,221.5 L77.3,221.5 M1003.2,221.5 L999.5,221.5 
+		M73.6,179.4 L77.3,179.4 M1003.2,179.4 L999.5,179.4 M73.6,146.7 L77.3,146.7 M1003.2,146.7 L999.5,146.7 
+		M73.6,120.0 L77.3,120.0 M1003.2,120.0 L999.5,120.0 M73.6,97.4 L77.3,97.4 M1003.2,97.4 L999.5,97.4 
+		M73.6,77.8 L77.3,77.8 M1003.2,77.8 L999.5,77.8 M73.6,60.5 L77.3,60.5 M1003.2,60.5 L999.5,60.5 
+		 '/></g>
+<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,45.1 L1003.2,45.1  '/></g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M73.6,45.1 L81.1,45.1 M1003.2,45.1 L995.7,45.1  '/>	<g transform="translate(66.7,48.8)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
+		<text><tspan> 10000</tspan></text>
+	</g>
+</g>
+<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,720.0 L73.6,45.1  '/></g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M73.6,720.0 L73.6,712.5 M73.6,45.1 L73.6,52.6  '/>	<g transform="translate(73.6,738.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:middle">
+		<text><tspan> 16</tspan></text>
+	</g>
+</g>
+<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M189.8,720.0 L189.8,712.5 M189.8,637.5 L189.8,45.1  '/></g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M189.8,720.0 L189.8,712.5 M189.8,45.1 L189.8,52.6  '/>	<g transform="translate(189.8,738.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:middle">
+		<text><tspan> 16.5</tspan></text>
+	</g>
+</g>
+<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M306.0,720.0 L306.0,45.1  '/></g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M306.0,720.0 L306.0,712.5 M306.0,45.1 L306.0,52.6  '/>	<g transform="translate(306.0,738.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:middle">
+		<text><tspan> 17</tspan></text>
+	</g>
+</g>
+<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M422.2,720.0 L422.2,45.1  '/></g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M422.2,720.0 L422.2,712.5 M422.2,45.1 L422.2,52.6  '/>	<g transform="translate(422.2,738.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:middle">
+		<text><tspan> 17.5</tspan></text>
+	</g>
+</g>
+<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M538.4,720.0 L538.4,45.1  '/></g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M538.4,720.0 L538.4,712.5 M538.4,45.1 L538.4,52.6  '/>	<g transform="translate(538.4,738.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:middle">
+		<text><tspan> 18</tspan></text>
+	</g>
+</g>
+<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M654.6,720.0 L654.6,45.1  '/></g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M654.6,720.0 L654.6,712.5 M654.6,45.1 L654.6,52.6  '/>	<g transform="translate(654.6,738.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:middle">
+		<text><tspan> 18.5</tspan></text>
+	</g>
+</g>
+<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M770.8,720.0 L770.8,45.1  '/></g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M770.8,720.0 L770.8,712.5 M770.8,45.1 L770.8,52.6  '/>	<g transform="translate(770.8,738.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:middle">
+		<text><tspan> 19</tspan></text>
+	</g>
+</g>
+<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M887.0,720.0 L887.0,45.1  '/></g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M887.0,720.0 L887.0,712.5 M887.0,45.1 L887.0,52.6  '/>	<g transform="translate(887.0,738.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:middle">
+		<text><tspan> 19.5</tspan></text>
+	</g>
+</g>
+<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M1003.2,720.0 L1003.2,45.1  '/></g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M1003.2,720.0 L1003.2,712.5 M1003.2,45.1 L1003.2,52.6  '/>	<g transform="translate(1003.2,738.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:middle">
+		<text><tspan> 20</tspan></text>
+	</g>
+	<path stroke='black'  d='M73.6,45.1 L73.6,720.0 L1003.2,720.0 L1003.2,45.1 L73.6,45.1 Z  '/>	<g transform="translate(14.6,382.6) rotate(270)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:middle">
+		<text><tspan>instructions completed per element (n)</tspan></text>
+	</g>
+	<g transform="translate(538.4,761.2)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:middle">
+		<text><tspan>log₂(n)</tspan></text>
+	</g>
+	<g transform="translate(538.4,26.3)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:middle">
+		<text><tspan>Hash Table insert+find, instructions completed</tspan></text>
+	</g>
+</g>
+	<g id="gnuplot_plot_1" ><title>gnuplot_plot_1</title>
+<g style="fill:none; color:red; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<g id="gnuplot_plot_1_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_1')">
+	<g transform="translate(225.4,648.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
+		<text><tspan>ds=DPH-with-buckets</tspan></text>
+	</g>
+	<path  d='M232.3,645.0 L263.6,645.0  '/>	</g>
+	<path  d='M73.6,405.0 L538.4,350.2 L1003.2,424.4  '/>	<use xlink:href='#gpPt0' transform='translate(73.6,405.0) scale(1.88)'/>
+	<use xlink:href='#gpPt0' transform='translate(538.4,350.2) scale(1.88)'/>
+	<use xlink:href='#gpPt0' transform='translate(1003.2,424.4) scale(1.88)'/>
+	<g id="gnuplot_plot_1_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_1')">
+	<use xlink:href='#gpPt0' transform='translate(247.9,645.0) scale(1.88)'/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_2" ><title>gnuplot_plot_2</title>
+<g style="fill:none; color:green; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<g id="gnuplot_plot_2_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_2')">
+	<g transform="translate(225.4,663.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
+		<text><tspan>ds=DPH-with-buckets-2</tspan></text>
+	</g>
+	<path  d='M232.3,660.0 L263.6,660.0  '/>	</g>
+	<path  d='M73.6,276.9 L538.4,269.1 L1003.2,218.9  '/>	<use xlink:href='#gpPt1' transform='translate(73.6,276.9) scale(1.88)'/>
+	<use xlink:href='#gpPt1' transform='translate(538.4,269.1) scale(1.88)'/>
+	<use xlink:href='#gpPt1' transform='translate(1003.2,218.9) scale(1.88)'/>
+	<g id="gnuplot_plot_2_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_2')">
+	<use xlink:href='#gpPt1' transform='translate(247.9,660.0) scale(1.88)'/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_3" ><title>gnuplot_plot_3</title>
+<g style="fill:none; color:blue; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<g id="gnuplot_plot_3_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_3')">
+	<g transform="translate(225.4,678.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
+		<text><tspan>ds=dense-hash-map</tspan></text>
+	</g>
+	<path  d='M232.3,675.0 L263.6,675.0  '/>	</g>
+	<path  d='M73.6,573.8 L538.4,573.9 L1003.2,573.9  '/>	<use xlink:href='#gpPt2' transform='translate(73.6,573.8) scale(1.88)'/>
+	<use xlink:href='#gpPt2' transform='translate(538.4,573.9) scale(1.88)'/>
+	<use xlink:href='#gpPt2' transform='translate(1003.2,573.9) scale(1.88)'/>
+	<g id="gnuplot_plot_3_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_3')">
+	<use xlink:href='#gpPt2' transform='translate(247.9,675.0) scale(1.88)'/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_4" ><title>gnuplot_plot_4</title>
+<g style="fill:none; color:cyan; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<g id="gnuplot_plot_4_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_4')">
+	<g transform="translate(225.4,693.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
+		<text><tspan>ds=sparse-hash-map</tspan></text>
+	</g>
+	<path  d='M232.3,690.0 L263.6,690.0  '/>	</g>
+	<path  d='M73.6,289.2 L538.4,294.3 L1003.2,298.6  '/>	<use xlink:href='#gpPt3' transform='translate(73.6,289.2) scale(1.88)'/>
+	<use xlink:href='#gpPt3' transform='translate(538.4,294.3) scale(1.88)'/>
+	<use xlink:href='#gpPt3' transform='translate(1003.2,298.6) scale(1.88)'/>
+	<g id="gnuplot_plot_4_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_4')">
+	<use xlink:href='#gpPt3' transform='translate(247.9,690.0) scale(1.88)'/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_5" ><title>gnuplot_plot_5</title>
+<g style="fill:none; color:#157545; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<g id="gnuplot_plot_5_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_5')">
+	<g transform="translate(225.4,708.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
+		<text><tspan>ds=std::unordered-map</tspan></text>
+	</g>
+	<path  d='M232.3,705.0 L263.6,705.0  '/>	</g>
+	<path  d='M73.6,495.7 L538.4,493.6 L1003.2,499.1  '/>	<use xlink:href='#gpPt4' transform='translate(73.6,495.7) scale(1.88)'/>
+	<use xlink:href='#gpPt4' transform='translate(538.4,493.6) scale(1.88)'/>
+	<use xlink:href='#gpPt4' transform='translate(1003.2,499.1) scale(1.88)'/>
+	<g id="gnuplot_plot_5_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_5')">
+	<use xlink:href='#gpPt4' transform='translate(247.9,705.0) scale(1.88)'/>
+	</g>
+</g>
+	</g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
+	<path stroke='black'  d='M73.6,45.1 L73.6,720.0 L1003.2,720.0 L1003.2,45.1 L73.6,45.1 Z  '/></g>
+
+<script type="text/javascript"><![CDATA[
+// plot boundaries and axis scaling information for mousing 
+gnuplot_svg.plot_term_xmax = 1024;
+gnuplot_svg.plot_term_ymax = 768;
+gnuplot_svg.plot_xmin = 73.6;
+gnuplot_svg.plot_xmax = 1003.2;
+gnuplot_svg.plot_ybot = 720.0;
+gnuplot_svg.plot_ytop = 45.1;
+gnuplot_svg.plot_width = 929.6;
+gnuplot_svg.plot_height = 674.9;
+gnuplot_svg.plot_axis_xmin = 16;
+gnuplot_svg.plot_axis_xmax = 20;
+gnuplot_svg.plot_axis_ymin = 100;
+gnuplot_svg.plot_axis_ymax = 10000;
+gnuplot_svg.polar_mode = false;
+gnuplot_svg.plot_axis_x2min = "none"
+gnuplot_svg.plot_axis_y2min = "none"
+gnuplot_svg.plot_logaxis_x = 0;
+gnuplot_svg.plot_logaxis_y = 1;
+gnuplot_svg.plot_timeaxis_x = "";
+]]>
+</script>
+</g>
+
+  <text id="coord_text" text-anchor="start" pointer-events="none"
+  font-size="12" font-family="Arial"
+  visibility="hidden"> </text>
+
+  <image x='10' y='742' width='16' height='16' xlink:href='grid.png'
+    onclick='gnuplot_svg.toggleGrid();'/>
+</svg>
+

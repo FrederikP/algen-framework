@@ -1,0 +1,13 @@
+example: ./svg2pdf.sh hash_access_branchmiss.svg \
+hash_ins-del-cycle_cycles.svg hash_access_cycles.svg \ 
+hash_ins-del-cycle_instructions.svg hash_access_instructions.svg \	
+hash_ins-del-cycle_time.svg hash_access_time.svg \
+hash_insert_branchmiss.svg hash_find_branchmiss.svg \
+hash_insert_cycles.svg hash_find_cycles.svg \
+hash_insert-find_branchmiss.svg hash_find_instructions.svg \ 
+hash_insert-find_cycles.svg hash_find-random_branchmiss.svg \
+hash_insert-find_instructions.svg hash_find-random_cycles.svg \
+hash_insert-find_time.svg hash_find-random_instructions.svg \
+hash_insert_instructions.svg hash_find-random_time.svg \
+hash_insert_time.svg hash_find_time.svg \
+hash_ins-del-cycle_branchmiss.svg 

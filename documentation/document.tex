@@ -3,6 +3,7 @@
 \documentclass{article}
 
 \usepackage[style=numeric,backend=bibtex]{biblatex}
+\usepackage{graphicx}
 
 \bibliography{bib}
 
@@ -46,6 +47,8 @@ code update was pushed to the repository and plots were generated and saved per
 build. That allowed us to test different parameters and compare them to the
 earlier builds.
 
+\includegraphics[width=\linewidth]{img/hash_find-random_time}
+
 \section{Further Ideas}
 
 Another approach we tried was having all the buckets in one single array as
@@ -54,8 +57,6 @@ copying/moving needed, when resizing one of the buckets. This could be avoided
 when giving all the buckets some extra space in the array, which they can grow
 into without the need to touch other buckets. This, again, would increase the
 space requirements.
-
-
 
 \printbibliography
 
