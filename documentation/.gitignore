@@ -1,3 +1,8 @@
 /tmp/
-/document.synctex.gz
+/document.synctex.gz*
 /document-blx.bib
+/document.aux
+/document.bbl
+/document.blg
+/document.log
+
