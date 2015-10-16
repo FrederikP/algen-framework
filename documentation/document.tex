@@ -37,7 +37,7 @@ some conditions. It can also be necessary to completely rehash the table. \cite{
 
 \section {Approaches}
 
-We implemented three different approaches for the dynamic perfect hashing. The first two stick close to \cite{di94}, but have different data structures. The third tries to solve the problem with less mathematic, but in a more pragmatical way. The implementation of these approaches is available on github\footnote{\href{https://github.com/FrederikP/algen-framework}{https://github.com/FrederikP/algen-framework}}.
+We implemented three different approaches for dynamic perfect hashing. The first two stick close to \cite{di94}, but have different data structures. The third tries to solve the problem less mathematically but pragmatic instead. The implementations of these approaches are available on github\footnote{\href{https://github.com/FrederikP/algen-framework}{https://github.com/FrederikP/algen-framework}}.
 
 \subsection{Storing all entries in a single vector}
 
@@ -45,7 +45,7 @@ At first we tried to store all the entries in one single array instead of using 
 
 \subsection{Storing the entries in buckets}
 
-In this case every bucket stores the data in its own vector and the table consists of a vector of buckets. This approach is much more efficient than the simple approach with a single vector. We implemented this approach in two different ways. The first sticks close to \cite{di94} (rehashing logic, counters for the table and the buckets) and is in the file \texttt{DPH\_with\_buckets.h}. The second one tries to solve the problem in a more pragmatic way. We removed the counters and the thresholds and the resizing/rehashing is now based on the amount of elements contained by the table/bucket and its capacity. This approach is in the file \texttt{DPH\_with\_buckets\_2.h}. We isolated six parameters, that affect the performance and the needed space for the approaches with buckets.
+In this variant every bucket stores the data in its own vector and the table consists of a vector of buckets. This implementation is much more efficient than the simple approach with a single vector. We implemented this approach in two different ways. The first sticks close to \cite{di94} (rehashing logic, counters for the table and the buckets) and is in the file \texttt{DPH\_with\_buckets.h}. In the second one we removed the counters and the thresholds and the resizing/rehashing is now based on the amount of elements contained by the table/bucket and its capacity. This approach is in the file \texttt{DPH\_with\_buckets\_2.h}. We isolated six parameters, that affect the performance and the needed space for the approaches with buckets.
 
 \section{Parameters}
 
@@ -54,16 +54,16 @@ algorithm. We will have a look at several parameters here.
 
 \begin{itemize}
   \item \textbf{Bucket Capacity Factor}\\
-  	How much bigger than the number of current elements will a bucket be created for (capacity-wise). In the approach with counters and thresholds is the threshold of a bucket equal to its capacity.
+  	How much bigger than the number of current elements will a bucket be created for (capacity-wise). In the approach with counters and thresholds the threshold of a bucket is equal to its capacity.
   \item \textbf{Bucket Length Factor}\\
     How much bigger than the desired capacity will a bucket be. The smaller this is, the faster the data structure needs to be updated. The larger it is, the more space is needed per element.
   \item \textbf{Maximum Number of Rehash Attempts}\\
   	How often can the guessing of a new injective hash function of a bucket fail, before the bucket gets resized. The smaller it is, the faster is the rehashing. But if this value is to small, it's possible that the bucket becomes bigger than necessary.
   \item \textbf{Rehash Length Factor}\\
-    The factor the bucket length will be multiplied with, if the maximum number of rehash attempts is exceeded. The bigger it is, the unlikely it's necessary to resize the bucket again. But if this value is to big, the bucket will become bigger than necessary.
+    The factor the bucket length will be multiplied with, if the maximum number of rehash attempts is exceeded. The bigger it is, the more unlikely it's necessary to resize the bucket again. But if this value is to big, the bucket will become bigger than necessary.
   \item \textbf{Table Capacity Factor}\\
-    In the approach with counters and thresholds affects this parameter the threshold of the table: $ threshold = (1 + factor) * \max(elementAmount, 4) $
-    In the pragmatic approach affects is the capacity of the table equal to the number of contained elements multiplied with the factor.
+    In the approach with counters and thresholds this parameter affects the threshold of the table: $ threshold = (1 + factor) * \max(elementAmount, 4) $
+    In the pragmatic approach the capacity of the table is equal to the number of contained elements multiplied with the factor.
   \item \textbf{Element Amount per Bucket}\\
     The starting capacity of the buckets after the table has been initialized or rehashed. The bigger it is, the less buckets will be created.
 \end{itemize}
