@@ -82,17 +82,68 @@ After some experimenting with these parameters, the following values seem to cre
 \end{tabulary}
 \end{center}
 
-\section{Experiment Results}
+\section{Experiments}
 
 We ran our experiments on a quad core Intel Atom server running a 32bit Debian
 Jessie OS with 4GB of RAM. The benchmarks were run automatically each time a
 code update was pushed to the repository and plots were generated and saved per
 build. That allowed us to test different parameters and compare them to the
-earlier builds.\\
+earlier builds.
 
-\centering
-\includegraphics[width=0.9\linewidth]{img/hash_find-random_time}
+The processor was a Intel Atom D525. It does not have an L3 cache and sadly PAPI
+instrumentation for cache misses didn't work for L1 and L2. It clocks at 1.8GHz.
+
+In addition to the requirements of the algorithm
+framework\footnote{\href{https://github.com/lorenzhs/algen-framework}{https://github.com/lorenzhs/algen-framework}}
+our algorithms also need the primesieve library installed for quick finding of
+prime numbers as they are essential for the universal hash functions.
+
+We included the result graphs at the end of this document. We do not present
+results for the single array variant, since it was too slow to be competetive.\\
 
 \printbibliography
 
+\section*{Experiment Results}
+\subsection*{Find Random}
+\centering
+\includegraphics[width=\linewidth]{img/hash_find-random_time}
+\includegraphics[width=\linewidth]{img/hash_find-random_instructions}
+\includegraphics[width=\linewidth]{img/hash_find-random_cycles}
+\includegraphics[width=\linewidth]{img/hash_find-random_branchmiss}
+\raggedright
+\subsection*{Insert Delete Cycle}
+\centering
+\includegraphics[width=\linewidth]{img/hash_ins-del-cycle_time}
+\includegraphics[width=\linewidth]{img/hash_ins-del-cycle_instructions}
+\includegraphics[width=\linewidth]{img/hash_ins-del-cycle_cycles}
+\includegraphics[width=\linewidth]{img/hash_ins-del-cycle_branchmiss}
+\raggedright
+\subsection*{Find}
+\centering
+\includegraphics[width=\linewidth]{img/hash_find_time}
+\includegraphics[width=\linewidth]{img/hash_find_instructions}
+\includegraphics[width=\linewidth]{img/hash_find_cycles}
+\includegraphics[width=\linewidth]{img/hash_find_branchmiss}
+\raggedright
+\subsection*{Insert}
+\centering
+\includegraphics[width=\linewidth]{img/hash_insert_time}
+\includegraphics[width=\linewidth]{img/hash_insert_instructions}
+\includegraphics[width=\linewidth]{img/hash_insert_cycles}
+\includegraphics[width=\linewidth]{img/hash_insert_branchmiss}
+\raggedright
+\subsection*{Insert Find}
+\centering
+\includegraphics[width=\linewidth]{img/hash_insert-find_time}
+\includegraphics[width=\linewidth]{img/hash_insert-find_instructions}
+\includegraphics[width=\linewidth]{img/hash_insert-find_cycles}
+\includegraphics[width=\linewidth]{img/hash_insert-find_branchmiss}
+\raggedright
+\subsection*{Access}
+\centering
+\includegraphics[width=\linewidth]{img/hash_access_time}
+\includegraphics[width=\linewidth]{img/hash_access_instructions}
+\includegraphics[width=\linewidth]{img/hash_access_cycles}
+\includegraphics[width=\linewidth]{img/hash_access_branchmiss}
+\raggedright
 \end{document}
