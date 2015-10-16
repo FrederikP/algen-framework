@@ -164,9 +164,9 @@ onclick="gnuplot_svg.toggleCoordBox(evt)"  onmousemove="gnuplot_svg.moveCoordBox
 		<text><tspan>ds=DPH-with-buckets</tspan></text>
 	</g>
 	<path  d='M266.8,645.0 L298.1,645.0  '/>	</g>
-	<path  d='M108.1,408.3 L555.7,393.9 L1003.2,391.5  '/>	<use xlink:href='#gpPt0' transform='translate(108.1,408.3) scale(1.88)'/>
-	<use xlink:href='#gpPt0' transform='translate(555.7,393.9) scale(1.88)'/>
-	<use xlink:href='#gpPt0' transform='translate(1003.2,391.5) scale(1.88)'/>
+	<path  d='M108.1,413.6 L555.7,400.2 L1003.2,389.9  '/>	<use xlink:href='#gpPt0' transform='translate(108.1,413.6) scale(1.88)'/>
+	<use xlink:href='#gpPt0' transform='translate(555.7,400.2) scale(1.88)'/>
+	<use xlink:href='#gpPt0' transform='translate(1003.2,389.9) scale(1.88)'/>
 	<g id="gnuplot_plot_1_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_1')">
 	<use xlink:href='#gpPt0' transform='translate(282.4,645.0) scale(1.88)'/>
 	</g>
@@ -179,9 +179,9 @@ onclick="gnuplot_svg.toggleCoordBox(evt)"  onmousemove="gnuplot_svg.moveCoordBox
 		<text><tspan>ds=DPH-with-buckets-2</tspan></text>
 	</g>
 	<path  d='M266.8,660.0 L298.1,660.0  '/>	</g>
-	<path  d='M108.1,361.9 L555.7,319.9 L1003.2,180.9  '/>	<use xlink:href='#gpPt1' transform='translate(108.1,361.9) scale(1.88)'/>
-	<use xlink:href='#gpPt1' transform='translate(555.7,319.9) scale(1.88)'/>
-	<use xlink:href='#gpPt1' transform='translate(1003.2,180.9) scale(1.88)'/>
+	<path  d='M108.1,375.6 L555.7,332.6 L1003.2,220.9  '/>	<use xlink:href='#gpPt1' transform='translate(108.1,375.6) scale(1.88)'/>
+	<use xlink:href='#gpPt1' transform='translate(555.7,332.6) scale(1.88)'/>
+	<use xlink:href='#gpPt1' transform='translate(1003.2,220.9) scale(1.88)'/>
 	<g id="gnuplot_plot_2_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_2')">
 	<use xlink:href='#gpPt1' transform='translate(282.4,660.0) scale(1.88)'/>
 	</g>
@@ -194,8 +194,8 @@ onclick="gnuplot_svg.toggleCoordBox(evt)"  onmousemove="gnuplot_svg.moveCoordBox
 		<text><tspan>ds=dense-hash-map</tspan></text>
 	</g>
 	<path  d='M266.8,675.0 L298.1,675.0  '/>	</g>
-	<path  d='M108.1,614.0 L555.7,613.7 L1003.2,613.7  '/>	<use xlink:href='#gpPt2' transform='translate(108.1,614.0) scale(1.88)'/>
-	<use xlink:href='#gpPt2' transform='translate(555.7,613.7) scale(1.88)'/>
+	<path  d='M108.1,613.1 L555.7,611.1 L1003.2,613.7  '/>	<use xlink:href='#gpPt2' transform='translate(108.1,613.1) scale(1.88)'/>
+	<use xlink:href='#gpPt2' transform='translate(555.7,611.1) scale(1.88)'/>
 	<use xlink:href='#gpPt2' transform='translate(1003.2,613.7) scale(1.88)'/>
 	<g id="gnuplot_plot_3_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_3')">
 	<use xlink:href='#gpPt2' transform='translate(282.4,675.0) scale(1.88)'/>
@@ -209,9 +209,9 @@ onclick="gnuplot_svg.toggleCoordBox(evt)"  onmousemove="gnuplot_svg.moveCoordBox
 		<text><tspan>ds=sparse-hash-map</tspan></text>
 	</g>
 	<path  d='M266.8,690.0 L298.1,690.0  '/>	</g>
-	<path  d='M108.1,445.8 L555.7,445.9 L1003.2,445.8  '/>	<use xlink:href='#gpPt3' transform='translate(108.1,445.8) scale(1.88)'/>
-	<use xlink:href='#gpPt3' transform='translate(555.7,445.9) scale(1.88)'/>
-	<use xlink:href='#gpPt3' transform='translate(1003.2,445.8) scale(1.88)'/>
+	<path  d='M108.1,445.9 L555.7,445.0 L1003.2,446.0  '/>	<use xlink:href='#gpPt3' transform='translate(108.1,445.9) scale(1.88)'/>
+	<use xlink:href='#gpPt3' transform='translate(555.7,445.0) scale(1.88)'/>
+	<use xlink:href='#gpPt3' transform='translate(1003.2,446.0) scale(1.88)'/>
 	<g id="gnuplot_plot_4_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_4')">
 	<use xlink:href='#gpPt3' transform='translate(282.4,690.0) scale(1.88)'/>
 	</g>
@@ -224,9 +224,9 @@ onclick="gnuplot_svg.toggleCoordBox(evt)"  onmousemove="gnuplot_svg.moveCoordBox
 		<text><tspan>ds=std::unordered-map</tspan></text>
 	</g>
 	<path  d='M266.8,705.0 L298.1,705.0  '/>	</g>
-	<path  d='M108.1,535.8 L555.7,536.2 L1003.2,536.4  '/>	<use xlink:href='#gpPt4' transform='translate(108.1,535.8) scale(1.88)'/>
-	<use xlink:href='#gpPt4' transform='translate(555.7,536.2) scale(1.88)'/>
-	<use xlink:href='#gpPt4' transform='translate(1003.2,536.4) scale(1.88)'/>
+	<path  d='M108.1,536.0 L555.7,536.3 L1003.2,536.0  '/>	<use xlink:href='#gpPt4' transform='translate(108.1,536.0) scale(1.88)'/>
+	<use xlink:href='#gpPt4' transform='translate(555.7,536.3) scale(1.88)'/>
+	<use xlink:href='#gpPt4' transform='translate(1003.2,536.0) scale(1.88)'/>
 	<g id="gnuplot_plot_5_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_5')">
 	<use xlink:href='#gpPt4' transform='translate(282.4,705.0) scale(1.88)'/>
 	</g>

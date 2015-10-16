@@ -49,42 +49,46 @@ onclick="gnuplot_svg.toggleCoordBox(evt)"  onmousemove="gnuplot_svg.moveCoordBox
 	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,720.0 L1003.2,720.0  '/></g>
 <g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
 	<path stroke='black'  d='M73.6,720.0 L81.1,720.0 M1003.2,720.0 L995.7,720.0  '/>	<g transform="translate(66.7,723.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
-		<text><tspan> 0.1</tspan></text>
-	</g>
-	<path stroke='black'  d='M73.6,679.4 L77.3,679.4 M1003.2,679.4 L999.5,679.4 M73.6,625.7 L77.3,625.7 M1003.2,625.7 L999.5,625.7 
-		M73.6,598.1 L77.3,598.1 M1003.2,598.1 L999.5,598.1  '/></g>
-<g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
-	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,585.0 L1003.2,585.0  '/></g>
-<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
-	<path stroke='black'  d='M73.6,585.0 L81.1,585.0 M1003.2,585.0 L995.7,585.0  '/>	<g transform="translate(66.7,588.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
 		<text><tspan> 1</tspan></text>
 	</g>
-	<path stroke='black'  d='M73.6,544.4 L77.3,544.4 M1003.2,544.4 L999.5,544.4 M73.6,490.7 L77.3,490.7 M1003.2,490.7 L999.5,490.7 
-		M73.6,463.1 L77.3,463.1 M1003.2,463.1 L999.5,463.1  '/></g>
+	<path stroke='black'  d='M73.6,669.2 L77.3,669.2 M1003.2,669.2 L999.5,669.2 M73.6,639.5 L77.3,639.5 M1003.2,639.5 L999.5,639.5 
+		M73.6,618.4 L77.3,618.4 M1003.2,618.4 L999.5,618.4 M73.6,602.1 L77.3,602.1 M1003.2,602.1 L999.5,602.1 
+		M73.6,588.7 L77.3,588.7 M1003.2,588.7 L999.5,588.7 M73.6,577.4 L77.3,577.4 M1003.2,577.4 L999.5,577.4 
+		M73.6,567.6 L77.3,567.6 M1003.2,567.6 L999.5,567.6 M73.6,559.0 L77.3,559.0 M1003.2,559.0 L999.5,559.0 
+		 '/></g>
 <g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
-	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,450.0 L1003.2,450.0  '/></g>
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,551.3 L1003.2,551.3  '/></g>
 <g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
-	<path stroke='black'  d='M73.6,450.0 L81.1,450.0 M1003.2,450.0 L995.7,450.0  '/>	<g transform="translate(66.7,453.7)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
+	<path stroke='black'  d='M73.6,551.3 L81.1,551.3 M1003.2,551.3 L995.7,551.3  '/>	<g transform="translate(66.7,555.0)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
 		<text><tspan> 10</tspan></text>
 	</g>
-	<path stroke='black'  d='M73.6,409.4 L77.3,409.4 M1003.2,409.4 L999.5,409.4 M73.6,355.7 L77.3,355.7 M1003.2,355.7 L999.5,355.7 
-		M73.6,328.1 L77.3,328.1 M1003.2,328.1 L999.5,328.1  '/></g>
+	<path stroke='black'  d='M73.6,500.5 L77.3,500.5 M1003.2,500.5 L999.5,500.5 M73.6,470.8 L77.3,470.8 M1003.2,470.8 L999.5,470.8 
+		M73.6,449.7 L77.3,449.7 M1003.2,449.7 L999.5,449.7 M73.6,433.3 L77.3,433.3 M1003.2,433.3 L999.5,433.3 
+		M73.6,420.0 L77.3,420.0 M1003.2,420.0 L999.5,420.0 M73.6,408.7 L77.3,408.7 M1003.2,408.7 L999.5,408.7 
+		M73.6,398.9 L77.3,398.9 M1003.2,398.9 L999.5,398.9 M73.6,390.3 L77.3,390.3 M1003.2,390.3 L999.5,390.3 
+		 '/></g>
 <g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
-	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,315.1 L1003.2,315.1  '/></g>
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,382.5 L1003.2,382.5  '/></g>
 <g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
-	<path stroke='black'  d='M73.6,315.1 L81.1,315.1 M1003.2,315.1 L995.7,315.1  '/>	<g transform="translate(66.7,318.8)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
+	<path stroke='black'  d='M73.6,382.5 L81.1,382.5 M1003.2,382.5 L995.7,382.5  '/>	<g transform="translate(66.7,386.2)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
 		<text><tspan> 100</tspan></text>
 	</g>
-	<path stroke='black'  d='M73.6,274.4 L77.3,274.4 M1003.2,274.4 L999.5,274.4 M73.6,220.7 L77.3,220.7 M1003.2,220.7 L999.5,220.7 
-		M73.6,193.2 L77.3,193.2 M1003.2,193.2 L999.5,193.2  '/></g>
+	<path stroke='black'  d='M73.6,331.8 L77.3,331.8 M1003.2,331.8 L999.5,331.8 M73.6,302.0 L77.3,302.0 M1003.2,302.0 L999.5,302.0 
+		M73.6,281.0 L77.3,281.0 M1003.2,281.0 L999.5,281.0 M73.6,264.6 L77.3,264.6 M1003.2,264.6 L999.5,264.6 
+		M73.6,251.3 L77.3,251.3 M1003.2,251.3 L999.5,251.3 M73.6,240.0 L77.3,240.0 M1003.2,240.0 L999.5,240.0 
+		M73.6,230.2 L77.3,230.2 M1003.2,230.2 L999.5,230.2 M73.6,221.5 L77.3,221.5 M1003.2,221.5 L999.5,221.5 
+		 '/></g>
 <g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
-	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,180.1 L1003.2,180.1  '/></g>
+	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,213.8 L1003.2,213.8  '/></g>
 <g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
-	<path stroke='black'  d='M73.6,180.1 L81.1,180.1 M1003.2,180.1 L995.7,180.1  '/>	<g transform="translate(66.7,183.8)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
+	<path stroke='black'  d='M73.6,213.8 L81.1,213.8 M1003.2,213.8 L995.7,213.8  '/>	<g transform="translate(66.7,217.5)" style="stroke:none; fill:black; font-family:Verdana; font-size:10.00pt; text-anchor:end">
 		<text><tspan> 1000</tspan></text>
 	</g>
-	<path stroke='black'  d='M73.6,139.4 L77.3,139.4 M1003.2,139.4 L999.5,139.4 M73.6,85.7 L77.3,85.7 M1003.2,85.7 L999.5,85.7 
-		M73.6,58.2 L77.3,58.2 M1003.2,58.2 L999.5,58.2  '/></g>
+	<path stroke='black'  d='M73.6,163.0 L77.3,163.0 M1003.2,163.0 L999.5,163.0 M73.6,133.3 L77.3,133.3 M1003.2,133.3 L999.5,133.3 
+		M73.6,112.2 L77.3,112.2 M1003.2,112.2 L999.5,112.2 M73.6,95.9 L77.3,95.9 M1003.2,95.9 L999.5,95.9 
+		M73.6,82.5 L77.3,82.5 M1003.2,82.5 L999.5,82.5 M73.6,71.2 L77.3,71.2 M1003.2,71.2 L999.5,71.2 
+		M73.6,61.5 L77.3,61.5 M1003.2,61.5 L999.5,61.5 M73.6,52.8 L77.3,52.8 M1003.2,52.8 L999.5,52.8 
+		 '/></g>
 <g style="fill:none; color:gray; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
 	<path stroke='gray' stroke-dasharray=' 2,4' class="gridline"  d='M73.6,45.1 L1003.2,45.1  '/></g>
 <g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
@@ -171,9 +175,9 @@ onclick="gnuplot_svg.toggleCoordBox(evt)"  onmousemove="gnuplot_svg.moveCoordBox
 		<text><tspan>ds=DPH-with-buckets</tspan></text>
 	</g>
 	<path  d='M232.3,645.0 L263.6,645.0  '/>	</g>
-	<path  d='M73.6,359.6 L538.4,359.8 L1003.2,361.2  '/>	<use xlink:href='#gpPt0' transform='translate(73.6,359.6) scale(1.88)'/>
-	<use xlink:href='#gpPt0' transform='translate(538.4,359.8) scale(1.88)'/>
-	<use xlink:href='#gpPt0' transform='translate(1003.2,361.2) scale(1.88)'/>
+	<path  d='M73.6,475.3 L538.4,497.8 L1003.2,488.7  '/>	<use xlink:href='#gpPt0' transform='translate(73.6,475.3) scale(1.88)'/>
+	<use xlink:href='#gpPt0' transform='translate(538.4,497.8) scale(1.88)'/>
+	<use xlink:href='#gpPt0' transform='translate(1003.2,488.7) scale(1.88)'/>
 	<g id="gnuplot_plot_1_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_1')">
 	<use xlink:href='#gpPt0' transform='translate(247.9,645.0) scale(1.88)'/>
 	</g>
@@ -186,9 +190,9 @@ onclick="gnuplot_svg.toggleCoordBox(evt)"  onmousemove="gnuplot_svg.moveCoordBox
 		<text><tspan>ds=DPH-with-buckets-2</tspan></text>
 	</g>
 	<path  d='M232.3,660.0 L263.6,660.0  '/>	</g>
-	<path  d='M73.6,369.2 L538.4,373.3 L1003.2,373.0  '/>	<use xlink:href='#gpPt1' transform='translate(73.6,369.2) scale(1.88)'/>
-	<use xlink:href='#gpPt1' transform='translate(538.4,373.3) scale(1.88)'/>
-	<use xlink:href='#gpPt1' transform='translate(1003.2,373.0) scale(1.88)'/>
+	<path  d='M73.6,454.3 L538.4,459.0 L1003.2,462.6  '/>	<use xlink:href='#gpPt1' transform='translate(73.6,454.3) scale(1.88)'/>
+	<use xlink:href='#gpPt1' transform='translate(538.4,459.0) scale(1.88)'/>
+	<use xlink:href='#gpPt1' transform='translate(1003.2,462.6) scale(1.88)'/>
 	<g id="gnuplot_plot_2_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_2')">
 	<use xlink:href='#gpPt1' transform='translate(247.9,660.0) scale(1.88)'/>
 	</g>
@@ -201,9 +205,9 @@ onclick="gnuplot_svg.toggleCoordBox(evt)"  onmousemove="gnuplot_svg.moveCoordBox
 		<text><tspan>ds=dense-hash-map</tspan></text>
 	</g>
 	<path  d='M232.3,675.0 L263.6,675.0  '/>	</g>
-	<path  d='M73.6,582.2 L538.4,582.3 L1003.2,581.3  '/>	<use xlink:href='#gpPt2' transform='translate(73.6,582.2) scale(1.88)'/>
-	<use xlink:href='#gpPt2' transform='translate(538.4,582.3) scale(1.88)'/>
-	<use xlink:href='#gpPt2' transform='translate(1003.2,581.3) scale(1.88)'/>
+	<path  d='M73.6,701.5 L538.4,714.2 L1003.2,677.9  '/>	<use xlink:href='#gpPt2' transform='translate(73.6,701.5) scale(1.88)'/>
+	<use xlink:href='#gpPt2' transform='translate(538.4,714.2) scale(1.88)'/>
+	<use xlink:href='#gpPt2' transform='translate(1003.2,677.9) scale(1.88)'/>
 	<g id="gnuplot_plot_3_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_3')">
 	<use xlink:href='#gpPt2' transform='translate(247.9,675.0) scale(1.88)'/>
 	</g>
@@ -216,9 +220,9 @@ onclick="gnuplot_svg.toggleCoordBox(evt)"  onmousemove="gnuplot_svg.moveCoordBox
 		<text><tspan>ds=sparse-hash-map</tspan></text>
 	</g>
 	<path  d='M232.3,690.0 L263.6,690.0  '/>	</g>
-	<path  d='M73.6,260.2 L538.4,221.9 L1003.2,182.3  '/>	<use xlink:href='#gpPt3' transform='translate(73.6,260.2) scale(1.88)'/>
-	<use xlink:href='#gpPt3' transform='translate(538.4,221.9) scale(1.88)'/>
-	<use xlink:href='#gpPt3' transform='translate(1003.2,182.3) scale(1.88)'/>
+	<path  d='M73.6,314.0 L538.4,266.1 L1003.2,216.8  '/>	<use xlink:href='#gpPt3' transform='translate(73.6,314.0) scale(1.88)'/>
+	<use xlink:href='#gpPt3' transform='translate(538.4,266.1) scale(1.88)'/>
+	<use xlink:href='#gpPt3' transform='translate(1003.2,216.8) scale(1.88)'/>
 	<g id="gnuplot_plot_4_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_4')">
 	<use xlink:href='#gpPt3' transform='translate(247.9,690.0) scale(1.88)'/>
 	</g>
@@ -231,9 +235,9 @@ onclick="gnuplot_svg.toggleCoordBox(evt)"  onmousemove="gnuplot_svg.moveCoordBox
 		<text><tspan>ds=std::unordered-map</tspan></text>
 	</g>
 	<path  d='M232.3,705.0 L263.6,705.0  '/>	</g>
-	<path  d='M73.6,479.5 L538.4,469.3 L1003.2,464.4  '/>	<use xlink:href='#gpPt4' transform='translate(73.6,479.5) scale(1.88)'/>
-	<use xlink:href='#gpPt4' transform='translate(538.4,469.3) scale(1.88)'/>
-	<use xlink:href='#gpPt4' transform='translate(1003.2,464.4) scale(1.88)'/>
+	<path  d='M73.6,588.2 L538.4,575.3 L1003.2,569.0  '/>	<use xlink:href='#gpPt4' transform='translate(73.6,588.2) scale(1.88)'/>
+	<use xlink:href='#gpPt4' transform='translate(538.4,575.3) scale(1.88)'/>
+	<use xlink:href='#gpPt4' transform='translate(1003.2,569.0) scale(1.88)'/>
 	<g id="gnuplot_plot_5_keyentry" visibility="visible" onclick="gnuplot_svg.toggleVisibility(evt,'gnuplot_plot_5')">
 	<use xlink:href='#gpPt4' transform='translate(247.9,705.0) scale(1.88)'/>
 	</g>
@@ -254,7 +258,7 @@ gnuplot_svg.plot_width = 929.6;
 gnuplot_svg.plot_height = 674.9;
 gnuplot_svg.plot_axis_xmin = 16;
 gnuplot_svg.plot_axis_xmax = 20;
-gnuplot_svg.plot_axis_ymin = 0.1;
+gnuplot_svg.plot_axis_ymin = 1;
 gnuplot_svg.plot_axis_ymax = 10000;
 gnuplot_svg.polar_mode = false;
 gnuplot_svg.plot_axis_x2min = "none"
