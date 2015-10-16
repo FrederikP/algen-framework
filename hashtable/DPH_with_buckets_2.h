@@ -91,7 +91,6 @@ public:
 	}
 
 	void rehash(const Key& key) {
-		// TODO Use copy_if with move_iterator?
 		// Collecting entries of the bucket
 		std::vector<bucket_entry<Key, T>> bucketEntries(elementAmount + 1);
 		size_t j = 0;
@@ -119,7 +118,6 @@ public:
 		insertAll(bucketEntries);
 	}
 
-	// TODO should be private
 	size_t calculateLength(size_t bucketCapacity) {
 		size_t minLength = _lengthFactor * bucketCapacity;
 		return primes(minLength);
@@ -131,7 +129,6 @@ private:
 		size_t rehashAttempts = 0;
 		bool isInjective;
 		do {
-//			std::cout << "rehashBucket: Creating new entry hash function" << "\n";
 			++rehashAttempts;
 
 			isInjective = true;
@@ -155,8 +152,6 @@ private:
 			}
 
 			if (rehashAttempts > _maxRehashAttempts) {
-//				std::cout << "More than " << _maxRehashAttempts << " attempts to find a new hash function." << "\n";
-
 				length *= _rehashLengthFactor;
 				entries.clear();
 				entries.resize(length);
@@ -164,7 +159,6 @@ private:
 			}
 		} while (!isInjective);
 
-		// TODO Use move semantic instead of copying?
 		// Inserting the entries in the table
 		for(size_t i = 0; i < bucketEntries.size(); ++i) {
 			bucket_entry<Key, T>& entry = bucketEntries[i];
@@ -209,27 +203,6 @@ public:
 				return new DPH_with_buckets_2(1000);
 			}
         ));
-//        list.register_contender(Factory("DPH-with-buckets-2-2", "DPH-with-buckets-2-2",
-//            [](){
-//				return new DPH_with_buckets_2(1000,
-//											  2, 2, 5, 2,
-//											  2, 3000);
-//			}
-//        ));
-//        list.register_contender(Factory("DPH-with-buckets-2-3", "DPH-with-buckets-2-3",
-//            [](){
-//				return new DPH_with_buckets_2(1000,
-//											  2, 2, 5, 2,
-//											  2, 3000);
-//			}
-//        ));
-//        list.register_contender(Factory("DPH-with-buckets-2-4", "DPH-with-buckets-2-4",
-//            [](){
-//				return new DPH_with_buckets_2(1000,
-//											  2, 2, 5, 2,
-//											  2, 3000);
-//			}
-//        ));
     }
 	
     DPH_with_buckets_2(size_t initialElementAmount) : DPH_with_buckets_2(initialElementAmount,
@@ -276,23 +249,17 @@ public:
 		}
 		bool wasRehashed = false;
 		if (size() > capacity || _bucket.elementAmount > _elementAmountPerBucket) {
-//			std::cout << "Rehash all\n";
 			rehashAll(key);
 			wasRehashed = true;
 		} else if (_bucket.elementAmount <= _bucket.capacity and entry.getKey() != key) {
-//			std::cout << "Rehashing bucket\n";
 			_bucket.rehash(key);
 			wasRehashed= true;
 		} else if (_bucket.elementAmount > _bucket.capacity or _bucket.elementAmount <= _bucket.capacity / (_bucketCapacityFactor * 2)) {
-			//TODO Code duplication
 			size_t newBucketCapacity = _bucket.elementAmount * _bucketCapacityFactor;
 			size_t newBucketLength = _bucket.calculateLength(newBucketCapacity);
 			if (globalConditionIsSatisfied(newBucketLength, bucketIndex)) {
-	//			std::cout << "Resizing bucket: elementAmount=" << _bucket.elementAmount << "  oldLength= " << _bucket.length << "\n";
 				_bucket.resizeAndRehash(key);
-//				std::cout << " newLength= " << _bucket.length << "\n";
 			} else {
-//				std::cout << "Rehash all instead of bucket resize\n";
 				rehashAll();
 			}
 			wasRehashed = true;
@@ -392,7 +359,6 @@ private:
 		bucket_entry<Key, T>& entry = keyBucket[preHash];
 		bool hadCollision = entry.getKey() != key;
 
-		// TODO Use copy_if with move_iterator?
 		// Collecting entries of the bucket
 		std::vector<bucket_entry<Key, T>> entries(hadCollision ? size() + 1 : size());
 		size_t j = 0;
@@ -441,8 +407,6 @@ private:
 		std::vector<std::vector<bucket_entry<Key, T>>> bucketedEntries;
 		size_t lengthSum = 0;
 		do {
-//			std::cout << "rehashAll: Creating new bucket hash function" << "\n";
-
 			size_t prime = primes(bucketAmount);
 			size_t random = randoms(1, prime - 1);
 			size_t random2 = randoms(1, prime - 1);
