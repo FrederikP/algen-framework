@@ -64,7 +64,6 @@ int main(int argc, char** argv) {
 
     // Set up data structure contenders
     common::contender_list<HashTable> contenders;
-    // TODO: add your own implemenation here!
 
     // Add wrappers around std::unordered_map and Google's libsparsehash
     hashtable::unordered_map<int, int>::register_contenders(contenders);
@@ -73,8 +72,6 @@ int main(int argc, char** argv) {
 
 	hashtable::DPH_with_buckets<int, int>::register_contenders(contenders);
 	hashtable::DPH_with_buckets_2<int, int>::register_contenders(contenders);
-//	hashtable::DPH_with_single_vector<int, int>::register_contenders(contenders);
-	//hashtable::DPH_with_array_buckets<int, int>::register_contenders(contenders);
 
     // Register Benchmarks
     common::contender_list<Benchmark> benchmarks;
