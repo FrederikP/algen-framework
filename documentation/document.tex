@@ -37,7 +37,7 @@ some conditions. It can also be necessary to completely rehash the table. \cite{
 
 \section {Approaches}
 
-We implemented three different approaches for dynamic perfect hashing. The first two stick close to \cite{di94}, but have different data structures. The third tries to solve the problem less mathematically but pragmatic instead. The implementations of these approaches are available on github\footnote{\href{https://github.com/FrederikP/algen-framework}{https://github.com/FrederikP/algen-framework}}.
+We implemented three different approaches for dynamic perfect hashing. The first two stick close to \cite{di94}, but have different data structures. The third tries to solve the problem workload based instead of operation count based. The implementations of these approaches are available on github\footnote{\href{https://github.com/FrederikP/algen-framework}{https://github.com/FrederikP/algen-framework}}.
 
 \subsection{Storing all entries in a single vector}
 
@@ -68,7 +68,7 @@ algorithm. We will have a look at several parameters here.
     The starting capacity of the buckets after the table has been initialized or rehashed. The bigger it is, the less buckets will be created.
 \end{itemize}
 
-After some experimenting with these parameters, the following values seem to create the best results.
+After some experimenting with these parameters, the following values seem to create the best results. For each parameter we created several table instances with different values for the parameter to optimize, in which the other parameters stayed the same.
 
 \begin{center}
 \begin{tabulary}{0.95\textwidth}{R|C|C}
